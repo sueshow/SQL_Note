@@ -34,4 +34,5 @@ SELECT * FROM generate_series('2008-03-01 00:00'::timestamp,
 <br>
 
 ## 參考資料：
-* https://stackoverflow.com/questions/3002499/postgresql-crosstab-query
+* [Crosstab Query](https://stackoverflow.com/questions/3002499/postgresql-crosstab-query)
+* [Generate](https://www.postgresql.org/docs/9.1/functions-srf.html)
