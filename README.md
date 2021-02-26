@@ -31,7 +31,7 @@ FROM (SELECT section, json_object_agg(status,ct) AS obj
 SELECT * FROM generate_series('2008-03-01 00:00'::timestamp,
                               '2008-03-04 12:00', '10 hours');
 ```
-<br>
+
 ```
 SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
 ```
