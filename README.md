@@ -40,3 +40,4 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
 ## 參考資料：
 * [Crosstab Query](https://stackoverflow.com/questions/3002499/postgresql-crosstab-query)
 * [Generate](https://www.postgresql.org/docs/9.1/functions-srf.html)
+* [postgresql](https://docs.postgresql.tw/)
