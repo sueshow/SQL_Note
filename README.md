@@ -32,6 +32,10 @@ SELECT * FROM generate_series('2008-03-01 00:00'::timestamp,
                               '2008-03-04 12:00', '10 hours');
 ```
 <br>
+```
+SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
+```
+<br>
 
 ## 參考資料：
 * [Crosstab Query](https://stackoverflow.com/questions/3002499/postgresql-crosstab-query)
