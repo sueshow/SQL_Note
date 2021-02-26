@@ -25,5 +25,12 @@ FROM (SELECT section, json_object_agg(status,ct) AS obj
 ```
 <br>
 
+## Generate：
+* 範例：generate_series
+```
+SELECT * FROM generate_series('2008-03-01 00:00'::timestamp,
+                              '2008-03-04 12:00', '10 hours');
+```
+
 ## 參考資料：
 * https://stackoverflow.com/questions/3002499/postgresql-crosstab-query
