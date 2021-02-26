@@ -21,7 +21,7 @@ SELECT section,
 FROM (SELECT section, json_object_agg(status,ct) AS obj
       FROM t
       GROUP BY section
-     )X
+     )X;
 ```
 <br>
 
@@ -31,6 +31,7 @@ FROM (SELECT section, json_object_agg(status,ct) AS obj
 SELECT * FROM generate_series('2008-03-01 00:00'::timestamp,
                               '2008-03-04 12:00', '10 hours');
 ```
+<br>
 
 ## 參考資料：
 * https://stackoverflow.com/questions/3002499/postgresql-crosstab-query
