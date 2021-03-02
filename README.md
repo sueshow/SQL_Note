@@ -55,7 +55,7 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
 <br>
 
 ## Regex
-* Comparators
+* POSIX comparators
 <table border="1" width="50%">
     <tr>
         <th width="10%">Operator</a>
