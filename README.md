@@ -54,8 +54,60 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
   * 避免執行不必要的查詢
 <br>
 
+## Regex
+<table border="1" width="50%">
+    <tr>
+        <th width="10%">Operator</a>
+        <th width="10%">Description</a>
+        <th width="20%">Comparisons</a>
+        <th width="10%">Output</a>
+    </tr>
+    <tr>
+        <td rowspan="2"> ~ </td>
+        <td rowspan="2"> Match, Case sensitive </td>
+        <td> 'Timmy' ~ 'T%' </td>
+        <td> True </td>
+    </tr>
+    <tr>
+        <td> 'Timmy' ~ 't%' </td>
+        <td> False </td>
+    </tr>
+    <tr>
+        <td rowspan="2"> ~* </td>
+        <td rowspan="2"> Match, not Case sensitive </td>
+        <td> 'Timmy' ~* 'T%' </td>
+        <td> True </td>
+    </tr>
+    <tr>
+        <td> 'Timmy' ~* 't%' </td>
+        <td> True </td>
+    </tr>
+    <tr>
+        <td rowspan="2"> !~ </td>
+        <td rowspan="2"> No Match, Case sensitive </td>
+        <td> 'Timmy' !~ 'T%' </td>
+        <td> False </td>
+    </tr>
+    <tr>
+        <td> 'Timmy' !~ 't%' </td>
+        <td> True </td>
+    </tr>
+    <tr>
+        <td rowspan="2"> !~* </td>
+        <td rowspan="2"> No Match, not Case sensitive </td>
+        <td> 'Timmy' !~* 'T%' </td>
+        <td> False </td>
+    </tr>
+    <tr>
+        <td> 'Timmy' !~* 't%' </td>
+        <td> False </td>
+    </tr>
+</table>
+<br>
+
 ## 參考資料：
 * [Crosstab Query](https://stackoverflow.com/questions/3002499/postgresql-crosstab-query)
 * [Generate](https://www.postgresql.org/docs/9.1/functions-srf.html)
 * [PostgreSQL 正體中文使用手冊](https://docs.postgresql.tw/)
 * [CTE](https://dotblogs.com.tw/wasichris/2016/11/03/151251)
+* [regex](https://dataschool.com/how-to-teach-people-sql/how-regex-works-in-sql/)
