@@ -1,6 +1,6 @@
 # SQL
 
-## Crosstab Query：
+## Crosstab Query
 * 範例：json_object_agg In PostgreSQL  
 ```
 CREATE TEMP TABLE t (
@@ -25,7 +25,7 @@ FROM (SELECT section, json_object_agg(status,ct) AS obj
 ```
 <br>
 
-## Generate：
+## Generate
 * 範例：generate_series
 ```
 SELECT * FROM generate_series('2008-03-01 00:00'::timestamp,
@@ -35,6 +35,9 @@ SELECT * FROM generate_series('2008-03-01 00:00'::timestamp,
 ```
 SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
 ```
+<br>
+
+## Search Argument
 <br>
 
 ## 參考資料：
