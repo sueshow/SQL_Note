@@ -55,6 +55,45 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
 <br>
 
 ## Regex
+* Regular Expressions
+<table border="1" width="30%">
+    <tr>
+        <th width="10%">Name</a>
+        <th width="20%">Description</a>
+    </tr>
+    <tr>
+        <td> NOT REGEXP </td>
+        <td> Negation of REGEXP </td>
+    </tr>
+    <tr>
+        <td> REGEXP </td>
+        <td> Whether string matches regular expression </td>
+    </tr>
+    <tr>
+        <td> REGEXP_INSTR() </td>
+        <td> Starting index of substring matching regular expression </td>
+    </tr>
+    <tr>
+        <td> REGEXP_LIKE() </td>
+        <td> Whether string matches regular expression </td>
+    </tr>
+    <tr>
+        <td> REGEXP_REPLACE() </td>
+        <td> Replace substrings matching regular expression </td>
+    </tr>
+    <tr>
+        <td> REGEXP_SUBSTR() </td>
+        <td> Return substring matching regular expression </td>
+    </tr>
+    <tr>
+        <td> RLIKE </td>
+        <td> Whether string matches regular expression </td>
+    </tr>
+</table>
+<br>
+
+<br>
+
 * Metacharacters
 <table border="1" width="50%">
     <tr>
@@ -171,3 +210,4 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
 * [PostgreSQL 正體中文使用手冊](https://docs.postgresql.tw/)
 * [CTE](https://dotblogs.com.tw/wasichris/2016/11/03/151251)
 * [regex](https://dataschool.com/how-to-teach-people-sql/how-regex-works-in-sql/)
+* [regexp](https://dev.mysql.com/doc/refman/8.0/en/regexp.html)
