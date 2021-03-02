@@ -55,6 +55,65 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
 <br>
 
 ## Regex
+* Metacharacters
+<table border="1" width="50%">
+    <tr>
+        <th width="10%">Metacharacter</a>
+        <th width="10%">Description</a>
+        <th width="20%">Example</a>
+        <th width="10%">Example Matches</a>
+    </tr>
+    <tr>
+        <td> ^ </td>
+        <td> Start the match at the beginning of a stringe </td>
+        <td> ^c% </td>
+        <td> cat, car, chain </td>
+    </tr>
+    <tr>
+        <td> | </td>
+        <td> Alternation (either of two alternatives) </td>
+        <td> c(a|o)% </td>
+        <td> can, corn, cop </td>
+    </tr>
+    <tr>
+        <td> () </td>
+        <td> Group items in a single logical item </td>
+        <td> c(a|o)% </td>
+        <td> can, corn, cop </td>
+    </tr>
+    <tr>
+        <td> _ </td>
+        <td> Any single character (using LIKE and SIMILAR TO) </td>
+        <td> c_ </td>
+        <td> co, fico, pico </td>
+    </tr>
+    <tr>
+        <td> % </td>
+        <td> Any string (using LIKE and SIMILAR TO) </td>
+        <td> c% </td>
+        <td> chart, articulation, crate </td>
+    </tr>
+    <tr>
+        <td> . </td>
+        <td> Any single character (using POSIX) </td>
+        <td> c. </td>
+        <td> co, fico, pico </td>
+    </tr>
+    <tr>
+        <td> .* </td>
+        <td> Any string (using POSIX) </td>
+        <td> c.* </td>
+        <td> chart, articulation, crate </td>
+    </tr>
+    <tr>
+        <td> + </td>
+        <td> Repetition of the previous item one or more times </td>
+        <td> co+ </td>
+        <td> coo, cool </td>
+    </tr>
+</table>
+<br>
+
 * POSIX comparators
 <table border="1" width="50%">
     <tr>
