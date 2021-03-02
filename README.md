@@ -183,9 +183,9 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
 * POSIX comparators
 <table border="1" width="50%">
     <tr>
-        <th width="10%">Operator</a>
+        <th width="5%">Operator</a>
         <th width="10%">Description</a>
-        <th width="20%">Comparisons</a>
+        <th width="25%">Comparisons</a>
         <th width="10%">Output</a>
     </tr>
     <tr>
