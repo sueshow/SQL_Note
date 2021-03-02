@@ -54,45 +54,72 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
   * 避免執行不必要的查詢
 <br>
 
-## Regex
+## Regex in My SQL
 * Regular Expressions
-<table border="1" width="30%">
+<table border="1" width="50%">
     <tr>
         <th width="10%">Name</a>
         <th width="20%">Description</a>
+        <th width="20%">Example</a>
     </tr>
     <tr>
         <td> NOT REGEXP </td>
         <td> Negation of REGEXP </td>
+        <td>  </td>
     </tr>
     <tr>
         <td> REGEXP </td>
         <td> Whether string matches regular expression </td>
+        <td> SELECT 'Michael!' REGEXP '.*'; <br>
+             > 1 <br>
+             SELECT 'a' REGEXP 'A', 'a' REGEXP BINARY 'A'; <br> 
+             > 1  0 <br>
+        </td>
     </tr>
     <tr>
         <td> REGEXP_INSTR() </td>
         <td> Starting index of substring matching regular expression </td>
+        <td> SELECT REGEXP_INSTR('dog cat dog', 'dog', 2); <br>
+             > 9 <br>
+             SELECT REGEXP_INSTR('aa aaa aaaa', 'a{4}'); <br>
+             > 8 <br>
+        </td>
     </tr>
     <tr>
         <td> REGEXP_LIKE() </td>
         <td> Whether string matches regular expression </td>
+        <td> SELECT REGEXP_LIKE('CamelCase', 'CAMELCASE'); <br> 
+             > 1 <br>
+             SELECT REGEXP_LIKE('a', 'A'), REGEXP_LIKE('a', BINARY 'A'); <br> 
+             > 1  0 <br>
+        </td>
     </tr>
     <tr>
         <td> REGEXP_REPLACE() </td>
         <td> Replace substrings matching regular expression </td>
+        <td> SELECT REGEXP_REPLACE('a b c', 'b', 'X'); <br>
+             > a X c <br>
+             SELECT REGEXP_REPLACE('abc def ghi', '[a-z]+', 'X', 1, 3); <br>
+             > abc def X <br> 
+        </td>
     </tr>
     <tr>
         <td> REGEXP_SUBSTR() </td>
         <td> Return substring matching regular expression </td>
+        <td> SELECT REGEXP_SUBSTR('abc def ghi', '[a-z]+'); <br>
+             > abc <br>
+             SELECT REGEXP_SUBSTR('abc def ghi', '[a-z]+', 1, 3); <br>
+             > ghi <br>
+        </td>
     </tr>
     <tr>
         <td> RLIKE </td>
         <td> Whether string matches regular expression </td>
+        <td>  </td>
     </tr>
 </table>
 <br>
 
-<br>
 
 * Metacharacters
 <table border="1" width="50%">
