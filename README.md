@@ -56,11 +56,11 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
 
 ## Regex in My SQL
 * Regular Expressions
-<table border="1" width="50%">
+<table border="1" width="30%">
     <tr>
-        <th width="10%">Name</a>
-        <th width="20%">Description</a>
-        <th width="20%">Example</a>
+        <th width="5%">Name</a>
+        <th width="10%">Description</a>
+        <th width="15%">Example</a>
     </tr>
     <tr>
         <td> NOT REGEXP </td>
@@ -122,12 +122,12 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
 
 
 * Metacharacters
-<table border="1" width="50%">
+<table border="1" width="40%">
     <tr>
-        <th width="10%">Metacharacter</a>
+        <th width="5%">Metacharacter</a>
         <th width="10%">Description</a>
         <th width="20%">Example</a>
-        <th width="10%">Example Matches</a>
+        <th width="5%">Example Matches</a>
     </tr>
     <tr>
         <td> ^ </td>
@@ -181,12 +181,12 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
 <br>
 
 * POSIX comparators
-<table border="1" width="50%">
+<table border="1" width="40%">
     <tr>
         <th width="5%">Operator</a>
         <th width="10%">Description</a>
-        <th width="25%">Comparisons</a>
-        <th width="10%">Output</a>
+        <th width="20%">Comparisons</a>
+        <th width="5%">Output</a>
     </tr>
     <tr>
         <td rowspan="2"> ~ </td>
