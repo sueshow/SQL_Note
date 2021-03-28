@@ -38,7 +38,7 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
 <br>
 
 ## Array 
-* Functions
+* Operators
 <table border="1" width="20%">
     <tr>
         <th width="2%">Operator</a>
@@ -109,6 +109,7 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
         <td> {4,5,6,7} </td>
     </tr>
 </table>
+
 <br>
 
 ## Search Argument (SARG)
