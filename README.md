@@ -37,6 +37,80 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
 ```
 <br>
 
+## Array 
+* Functions
+<table border="1" width="20%">
+    <tr>
+        <th width="2%">Operator</a>
+        <th width="8%">Description</a>
+        <th width="10%">Example</a>
+        <th width="10%">Result</a>
+    </tr>
+    <tr>
+        <td> = </td>
+        <td> equal </td>
+        <td> ARRAY[1.1,2.1,3.1]::int[] = ARRAY[1,2,3] </td>
+        <td> true </td>
+    </tr>
+    <tr>
+        <td> < </td>
+        <td> less than </td>
+        <td> ARRAY[1,2,3] < ARRAY[1,2,4] </td>
+        <td> true </td>
+    </tr>
+    <tr>
+        <td> > </td>
+        <td> greater than </td>
+        <td> ARRAY[1,4,3] > ARRAY[1,2,4] </td>
+        <td> true </td>
+    </tr>
+    <tr>
+        <td> @> </td>
+        <td> contains </td>
+        <td> ARRAY[1,4,3] @> ARRAY[3,1] </td>
+        <td> true </td>
+    </tr>
+    <tr>
+        <td> @> </td>
+        <td> contains </td>
+        <td> ARRAY[1,4,3] @> ARRAY[3,1] </td>
+        <td> true </td>
+    </tr>
+    <tr>
+        <td> <@ </td>
+        <td> is contained by </td>
+        <td> ARRAY[2,7] <@ ARRAY[1,7,4,2,6] </td>
+        <td> true </td>
+    </tr>
+    <tr>
+        <td> && </td>
+        <td> overlap (have elements in common) </td>
+        <td> ARRAY[1,4,3] && ARRAY[2,1] </td>
+        <td> true </td>
+    </tr>
+    <tr>
+        <td rowspan="4"> || </td>
+        <td rowspan="2"> array-to-array concatenation </td>
+        <td> ARRAY[1,2,3] || ARRAY[4,5,6] </td>
+        <td> {1,2,3,4,5,6} </td>
+    </tr>
+    <tr>
+        <td> ARRAY[1,2,3] || ARRAY[[4,5,6],[7,8,9]] </td>
+        <td> {{1,2,3},{4,5,6},{7,8,9}} </td>
+    </tr>
+    <tr>
+        <td> element-to-array concatenation </td>
+        <td> 3 || ARRAY[4,5,6] </td>
+        <td> {3,4,5,6} </td>
+    </tr>
+    <tr>
+        <td> array-to-element concatenation </td>
+        <td> ARRAY[4,5,6] || 7 </td>
+        <td> {4,5,6,7} </td>
+    </tr>
+</table>
+<br>
+
 ## Search Argument (SARG)
 * 有效的查詢參數：`=`、`>`、`<`、`>=`、`<=`、`Between`、`Like`，如`like 'T%'`符合有效SARG，但`like '%T'`就不符合
 * 非有效的查詢參數：`NOT`、`!=`、`<>`、`!<`、`!>`、`NOT EXISTS`、`NOT IN`、`NOT LIKE`
@@ -238,3 +312,4 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
 * [CTE](https://dotblogs.com.tw/wasichris/2016/11/03/151251)
 * [regex](https://dataschool.com/how-to-teach-people-sql/how-regex-works-in-sql/)
 * [regexp](https://dev.mysql.com/doc/refman/8.0/en/regexp.html)
+* [Array Functions and Operators](https://www.postgresql.org/docs/9.1/functions-array.html)
