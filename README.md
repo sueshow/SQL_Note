@@ -138,67 +138,57 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
         <th width="10%">Example</a>
     </tr>
     <tr>
-        <td> NOT REGEXP </td>
+        <td> <code> NOT REGEXP </code> </td>
         <td> Negation of REGEXP </td>
         <td>  </td>
     </tr>
     <tr>
-        <td> REGEXP </td>
+        <td> <code> REGEXP </code> </td>
         <td> Whether string matches regular expression </td>
-        <td> <code> 
-             SELECT 'Michael!' REGEXP '.*'; <br>
+        <td> <code> SELECT 'Michael!' REGEXP '.*'; </code> <br>
              > 1 <br>
-             SELECT 'a' REGEXP 'A', 'a' REGEXP BINARY 'A'; <br> 
-             > 1  0 <br>
-             </code>
+             <code> SELECT 'a' REGEXP 'A', 'a' REGEXP BINARY 'A'; </code> <br> 
+             > 1  0 <br> 
         </td>
     </tr>
     <tr>
-        <td> REGEXP_INSTR() </td>
+        <td> <code> REGEXP_INSTR() </code> </td>
         <td> Starting index of substring matching regular expression </td>
-        <td> <code>
-             SELECT REGEXP_INSTR('dog cat dog', 'dog', 2); <br>
+        <td> <code> SELECT REGEXP_INSTR('dog cat dog', 'dog', 2); </code> <br>
              > 9 <br>
-             SELECT REGEXP_INSTR('aa aaa aaaa', 'a{4}'); <br>
+             <code> SELECT REGEXP_INSTR('aa aaa aaaa', 'a{4}'); </code> <br>
              > 8 <br>
-             </code>
         </td>
     </tr>
     <tr>
-        <td> REGEXP_LIKE() </td>
+        <td> <code> REGEXP_LIKE() </code> </td>
         <td> Whether string matches regular expression </td>
-        <td> <code>
-             SELECT REGEXP_LIKE('CamelCase', 'CAMELCASE'); <br> 
+        <td> <code> SELECT REGEXP_LIKE('CamelCase', 'CAMELCASE'); </code> <br> 
              > 1 <br>
-             SELECT REGEXP_LIKE('a', 'A'), REGEXP_LIKE('a', BINARY 'A'); <br> 
+             <code> SELECT REGEXP_LIKE('a', 'A'), REGEXP_LIKE('a', BINARY 'A'); </code> <br> 
              > 1  0 <br>
-             </code>
         </td>
     </tr>
     <tr>
-        <td> REGEXP_REPLACE() </td>
+        <td> <code> REGEXP_REPLACE() </code> </td>
         <td> Replace substrings matching regular expression </td>
-        <td> <code>
-             SELECT REGEXP_REPLACE('a b c', 'b', 'X'); <br>
+        <td> <code> SELECT REGEXP_REPLACE('a b c', 'b', 'X'); </code> <br>
              > a X c <br>
-             SELECT REGEXP_REPLACE('abc def ghi', '[a-z]+', 'X', 1, 3); <br>
+             <code> SELECT REGEXP_REPLACE('abc def ghi', '[a-z]+', 'X', 1, 3); </code> <br>
              > abc def X <br> 
-             </code>
         </td>
     </tr>
     <tr>
-        <td> REGEXP_SUBSTR() </td>
+        <td> <code> REGEXP_SUBSTR() </code> </td>
         <td> Return substring matching regular expression </td>
-        <td> <code>
-             SELECT REGEXP_SUBSTR('abc def ghi', '[a-z]+'); <br>
+        <td> <code> SELECT REGEXP_SUBSTR('abc def ghi', '[a-z]+'); </code> <br>
              > abc <br>
-             SELECT REGEXP_SUBSTR('abc def ghi', '[a-z]+', 1, 3); <br>
+             <code> SELECT REGEXP_SUBSTR('abc def ghi', '[a-z]+', 1, 3); </code> <br>
              > ghi <br>
-             </code>
         </td>
     </tr>
     <tr>
-        <td> RLIKE </td>
+        <td> <code> RLIKE </code> </td>
         <td> Whether string matches regular expression </td>
         <td>  </td>
     </tr>
