@@ -47,49 +47,49 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
         <th width="10%">Result</a>
     </tr>
     <tr>
-        <td> = </td>
+        <td> <code> = </code> </td>
         <td> equal </td>
         <td> ARRAY[1.1,2.1,3.1]::int[] = ARRAY[1,2,3] </td>
         <td> true </td>
     </tr>
     <tr>
-        <td> < </td>
+        <td> <code> < </code> </td>
         <td> less than </td>
         <td> ARRAY[1,2,3] < ARRAY[1,2,4] </td>
         <td> true </td>
     </tr>
     <tr>
-        <td> > </td>
+        <td> <code> > </code> </td>
         <td> greater than </td>
         <td> ARRAY[1,4,3] > ARRAY[1,2,4] </td>
         <td> true </td>
     </tr>
     <tr>
-        <td> @> </td>
+        <td> <code> @> </code> </td>
         <td> contains </td>
         <td> ARRAY[1,4,3] @> ARRAY[3,1] </td>
         <td> true </td>
     </tr>
     <tr>
-        <td> @> </td>
+        <td> <code> @> </code> </td>
         <td> contains </td>
         <td> ARRAY[1,4,3] @> ARRAY[3,1] </td>
         <td> true </td>
     </tr>
     <tr>
-        <td> <@ </td>
+        <td> <code> <@ </code> </td>
         <td> is contained by </td>
         <td> ARRAY[2,7] <@ ARRAY[1,7,4,2,6] </td>
         <td> true </td>
     </tr>
     <tr>
-        <td> && </td>
+        <td> <code> && </code> </td>
         <td> overlap (have elements in common) </td>
         <td> ARRAY[1,4,3] && ARRAY[2,1] </td>
         <td> true </td>
     </tr>
     <tr>
-        <td rowspan="4"> || </td>
+        <td rowspan="4"> <code> || </code> </td>
         <td rowspan="2"> array-to-array concatenation </td>
         <td> ARRAY[1,2,3] || ARRAY[4,5,6] </td>
         <td> {1,2,3,4,5,6} </td>
