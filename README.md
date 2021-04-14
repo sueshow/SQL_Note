@@ -207,7 +207,7 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
     <tr>
         <td> <code> ^ </code> </td>
         <td> Start the match at the beginning of a stringe </td>
-        <td> </code> ^c% </code> </td>
+        <td> <code> ^c% </code> </td>
         <td> cat, car, chain </td>
     </tr>
     <tr>
