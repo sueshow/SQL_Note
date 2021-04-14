@@ -55,57 +55,57 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
     <tr>
         <td> <code> < </code> </td>
         <td> less than </td>
-        <td> ARRAY[1,2,3] < ARRAY[1,2,4] </td>
+        <td> <code> ARRAY[1,2,3] < ARRAY[1,2,4] </code> </td>
         <td> true </td>
     </tr>
     <tr>
         <td> <code> > </code> </td>
         <td> greater than </td>
-        <td> ARRAY[1,4,3] > ARRAY[1,2,4] </td>
+        <td> <code> ARRAY[1,4,3] > ARRAY[1,2,4] </code> </td>
         <td> true </td>
     </tr>
     <tr>
         <td> <code> @> </code> </td>
         <td> contains </td>
-        <td> ARRAY[1,4,3] @> ARRAY[3,1] </td>
+        <td> <code> ARRAY[1,4,3] @> ARRAY[3,1] </code> </td>
         <td> true </td>
     </tr>
     <tr>
         <td> <code> @> </code> </td>
         <td> contains </td>
-        <td> ARRAY[1,4,3] @> ARRAY[3,1] </td>
+        <td> <code> ARRAY[1,4,3] @> ARRAY[3,1] </code> </td>
         <td> true </td>
     </tr>
     <tr>
         <td> <code> <@ </code> </td>
         <td> is contained by </td>
-        <td> ARRAY[2,7] <@ ARRAY[1,7,4,2,6] </td>
+        <td> <code> ARRAY[2,7] <@ ARRAY[1,7,4,2,6] </code> </td>
         <td> true </td>
     </tr>
     <tr>
         <td> <code> && </code> </td>
         <td> overlap (have elements in common) </td>
-        <td> ARRAY[1,4,3] && ARRAY[2,1] </td>
+        <td> <code> ARRAY[1,4,3] && ARRAY[2,1] </code> </td>
         <td> true </td>
     </tr>
     <tr>
         <td rowspan="4"> <code> || </code> </td>
         <td rowspan="2"> array-to-array concatenation </td>
-        <td> ARRAY[1,2,3] || ARRAY[4,5,6] </td>
+        <td> <code> ARRAY[1,2,3] || ARRAY[4,5,6] </code> </td>
         <td> {1,2,3,4,5,6} </td>
     </tr>
     <tr>
-        <td> ARRAY[1,2,3] || ARRAY[[4,5,6],[7,8,9]] </td>
+        <td> <code> ARRAY[1,2,3] || ARRAY[[4,5,6],[7,8,9]] </code> </td>
         <td> {{1,2,3},{4,5,6},{7,8,9}} </td>
     </tr>
     <tr>
         <td> element-to-array concatenation </td>
-        <td> 3 || ARRAY[4,5,6] </td>
+        <td> <code> 3 || ARRAY[4,5,6] </code> </td>
         <td> {3,4,5,6} </td>
     </tr>
     <tr>
         <td> array-to-element concatenation </td>
-        <td> ARRAY[4,5,6] || 7 </td>
+        <td> <code> ARRAY[4,5,6] || 7 </code> </td>
         <td> {4,5,6,7} </td>
     </tr>
 </table>
@@ -145,46 +145,56 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
     <tr>
         <td> REGEXP </td>
         <td> Whether string matches regular expression </td>
-        <td> SELECT 'Michael!' REGEXP '.*'; <br>
+        <td> <code> 
+             SELECT 'Michael!' REGEXP '.*'; <br>
              > 1 <br>
              SELECT 'a' REGEXP 'A', 'a' REGEXP BINARY 'A'; <br> 
              > 1  0 <br>
+             </code>
         </td>
     </tr>
     <tr>
         <td> REGEXP_INSTR() </td>
         <td> Starting index of substring matching regular expression </td>
-        <td> SELECT REGEXP_INSTR('dog cat dog', 'dog', 2); <br>
+        <td> <code>
+             SELECT REGEXP_INSTR('dog cat dog', 'dog', 2); <br>
              > 9 <br>
              SELECT REGEXP_INSTR('aa aaa aaaa', 'a{4}'); <br>
              > 8 <br>
+             </code>
         </td>
     </tr>
     <tr>
         <td> REGEXP_LIKE() </td>
         <td> Whether string matches regular expression </td>
-        <td> SELECT REGEXP_LIKE('CamelCase', 'CAMELCASE'); <br> 
+        <td> <code>
+             SELECT REGEXP_LIKE('CamelCase', 'CAMELCASE'); <br> 
              > 1 <br>
              SELECT REGEXP_LIKE('a', 'A'), REGEXP_LIKE('a', BINARY 'A'); <br> 
              > 1  0 <br>
+             </code>
         </td>
     </tr>
     <tr>
         <td> REGEXP_REPLACE() </td>
         <td> Replace substrings matching regular expression </td>
-        <td> SELECT REGEXP_REPLACE('a b c', 'b', 'X'); <br>
+        <td> <code>
+             SELECT REGEXP_REPLACE('a b c', 'b', 'X'); <br>
              > a X c <br>
              SELECT REGEXP_REPLACE('abc def ghi', '[a-z]+', 'X', 1, 3); <br>
              > abc def X <br> 
+             </code>
         </td>
     </tr>
     <tr>
         <td> REGEXP_SUBSTR() </td>
         <td> Return substring matching regular expression </td>
-        <td> SELECT REGEXP_SUBSTR('abc def ghi', '[a-z]+'); <br>
+        <td> <code>
+             SELECT REGEXP_SUBSTR('abc def ghi', '[a-z]+'); <br>
              > abc <br>
              SELECT REGEXP_SUBSTR('abc def ghi', '[a-z]+', 1, 3); <br>
              > ghi <br>
+             </code>
         </td>
     </tr>
     <tr>
@@ -205,51 +215,51 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
         <th width="3%">Example Matches</a>
     </tr>
     <tr>
-        <td> ^ </td>
+        <td> <code> ^ </code> </td>
         <td> Start the match at the beginning of a stringe </td>
-        <td> ^c% </td>
+        <td> </code> ^c% </code> </td>
         <td> cat, car, chain </td>
     </tr>
     <tr>
-        <td> | </td>
+        <td> <code> | </code> </td>
         <td> Alternation (either of two alternatives) </td>
-        <td> c(a|o)% </td>
+        <td> <code> c(a|o)% </code> </td>
         <td> can, corn, cop </td>
     </tr>
     <tr>
-        <td> () </td>
+        <td> <code> () </code> </td>
         <td> Group items in a single logical item </td>
-        <td> c(a|o)% </td>
+        <td> <code> c(a|o)% </code> </td>
         <td> can, corn, cop </td>
     </tr>
     <tr>
-        <td> _ </td>
+        <td> <code> _ </code> </td>
         <td> Any single character (using LIKE and SIMILAR TO) </td>
-        <td> c_ </td>
+        <td> <code> c_ </code> </td>
         <td> co, fico, pico </td>
     </tr>
     <tr>
-        <td> % </td>
+        <td> <code> % </code> </td>
         <td> Any string (using LIKE and SIMILAR TO) </td>
-        <td> c% </td>
+        <td> <code> c% </code> </td>
         <td> chart, articulation, crate </td>
     </tr>
     <tr>
-        <td> . </td>
+        <td> <code> . </code> </td>
         <td> Any single character (using POSIX) </td>
-        <td> c. </td>
+        <td> <code> c. </code> </td>
         <td> co, fico, pico </td>
     </tr>
     <tr>
-        <td> .* </td>
+        <td> <code> .*  </code> </td>
         <td> Any string (using POSIX) </td>
-        <td> c.* </td>
+        <td> <code> c.* </code> </td>
         <td> chart, articulation, crate </td>
     </tr>
     <tr>
-        <td> + </td>
+        <td> <code> + </code> </td>
         <td> Repetition of the previous item one or more times </td>
-        <td> co+ </td>
+        <td> <code> co+ </code> </td>
         <td> coo, cool </td>
     </tr>
 </table>
@@ -264,43 +274,43 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
         <th width="5%">Output</a>
     </tr>
     <tr>
-        <td rowspan="2"> ~ </td>
+        <td rowspan="2"> <code> ~ </code> </td>
         <td rowspan="2"> Match, Case sensitive </td>
-        <td> 'Timmy' ~ 'T%' </td>
+        <td> <code> 'Timmy' ~ 'T%' </code> </td>
         <td> True </td>
     </tr>
     <tr>
-        <td> 'Timmy' ~ 't%' </td>
+        <td> <code> 'Timmy' ~ 't%' </code> </td>
         <td> False </td>
     </tr>
     <tr>
-        <td rowspan="2"> ~* </td>
+        <td rowspan="2"> <code> ~* </code> </td>
         <td rowspan="2"> Match, not Case sensitive </td>
-        <td> 'Timmy' ~* 'T%' </td>
+        <td> <code> 'Timmy' ~* 'T%' </code> </td>
         <td> True </td>
     </tr>
     <tr>
-        <td> 'Timmy' ~* 't%' </td>
+        <td> <code> 'Timmy' ~* 't%' </code> </td>
         <td> True </td>
     </tr>
     <tr>
-        <td rowspan="2"> !~ </td>
+        <td rowspan="2"> <code> !~ </code> </td>
         <td rowspan="2"> No Match, Case sensitive </td>
-        <td> 'Timmy' !~ 'T%' </td>
+        <td> <code> 'Timmy' !~ 'T%' </code> </td>
         <td> False </td>
     </tr>
     <tr>
-        <td> 'Timmy' !~ 't%' </td>
+        <td> <code> 'Timmy' !~ 't%' </code> </td>
         <td> True </td>
     </tr>
     <tr>
-        <td rowspan="2"> !~* </td>
+        <td rowspan="2"> <code> !~* </code> </td>
         <td rowspan="2"> No Match, not Case sensitive </td>
-        <td> 'Timmy' !~* 'T%' </td>
+        <td> <code> 'Timmy' !~* 'T%' </code> </td>
         <td> False </td>
     </tr>
     <tr>
-        <td> 'Timmy' !~* 't%' </td>
+        <td> <code> 'Timmy' !~* 't%' </code> </td>
         <td> False </td>
     </tr>
 </table>
