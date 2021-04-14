@@ -49,7 +49,7 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
     <tr>
         <td> <code> = </code> </td>
         <td> equal </td>
-        <td> ARRAY[1.1,2.1,3.1]::int[] = ARRAY[1,2,3] </td>
+        <td> <code> ARRAY[1.1,2.1,3.1]::int[] = ARRAY[1,2,3] </code> </td>
         <td> true </td>
     </tr>
     <tr>
