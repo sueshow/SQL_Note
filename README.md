@@ -307,37 +307,46 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
 <br>
 
 ## 行列轉換
-### Postgresql
 * 列轉行
-```
-select * from test ;
- name
-------
- AA
- BB
- CC
+  * Postgresql
+    ```
+    select * from test ;
+     name
+    ------
+     AA
+     BB
+     CC
  
- select string_agg(name,',') from test;
- string_agg
-------------
- AA,BB,CC
-```
+    select string_agg(name,',') from test;
+     string_agg
+    ------------
+     AA,BB,CC
+    ```
+  * SQL SERVER 2000
+    ```
+    
+    ```
 * 行轉列 
-```
-select * from test ;
-   name
------------
- A,B,C,D,E
+  * Postgresql
+    ```
+    select * from test ;
+       name
+    -----------
+     A,B,C,D,E
  
-select regexp_split_to_table(name,',') from test;
- regexp_split_to_table
------------------------
- A
- B
- C
- D
- E
-```
+    select regexp_split_to_table(name,',') from test;
+     regexp_split_to_table
+    -----------------------
+     A
+     B
+     C
+     D
+     E
+    ```
+  * SQL SERVER 2000
+    ```
+    
+    ```
 <br>
 
 ## 參考資料：
