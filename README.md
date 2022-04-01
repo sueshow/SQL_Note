@@ -324,7 +324,57 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
     ```
   * SQL SERVER 2000
     ```
+    create table tb(姓名 varchar(10) , 課程 varchar(10) , 分數 int) 
+    insert into tb values('張三' , '語文' , 74) 
+    insert into tb values('張三' , '數學' , 83) 
+    insert into tb values('張三' , '物理' , 93) 
+    insert into tb values('李四' , '語文' , 74) 
+    insert into tb values('李四' , '數學' , 84) 
+    insert into tb values('李四' , '物理' , 94) 
+    go 
+
+
+    --靜態SQL,指課程只有語文、數學、物理這三門課程。(以下同) 
+    select 姓名 as 姓名 , 
+      max(case 課程 when '語文' then 分數 else 0 end) 語文, 
+      max(case 課程 when '數學' then 分數 else 0 end) 數學, 
+      max(case 課程 when '物理' then 分數 else 0 end) 物理 
+      cast(avg(分數*1.0) as decimal(18,2)) 平均分, 
+      sum(分數) 總分 
+    from tb 
+    group by 姓名 
+
+
+    --動態SQL,指課程不止語文、數學、物理這三門課程。(以下同) 
+    declare @sql varchar(8000) 
+    set @sql = 'select 姓名 ' 
+    select @sql = @sql + ' , max(case 課程 when ''' + 課程 + ''' then 分數 else 0 end) [' + 課程 + ']' 
+    from (select distinct 課程 from tb) as a 
+    set @sql = @sql + ' , cast(avg(分數*1.0) as decimal(18,2)) 平均分 , sum(分數) 總分 from tb group by 姓名' 
+    exec(@sql) 
+    ```
+  * SQL SERVER 2005
+    ```
+    --靜態SQL。 
+    select * from (select * from tb) a pivot (max(分數) for 課程 in (語文,數學,物理)) b 
     
+    select m.* , n.平均分 , n.總分 
+    from (select * from (select * from tb) a pivot (max(分數) for 課程 in (語文,數學,物理)) b) m, 
+    (select 姓名 , cast(avg(分數*1.0) as decimal(18,2)) 平均分 , sum(分數) 總分 from tb group by 姓名) n 
+    where m.姓名 = n.姓名  
+    
+    
+    --動態SQL。 
+    declare @sql varchar(8000) 
+    select @sql = isnull(@sql + ',' , '') + 課程 from tb group by 課程 
+    exec ('select * from (select * from tb) a pivot (max(分數) for 課程 in (' + @sql + ')) b') 
+    
+    declare @sql varchar(8000) 
+    select @sql = isnull(@sql + ',' , '') + 課程 from tb group by 課程 
+    exec ('select m.* , n.平均分 , n.總分 from 
+    (select * from (select * from tb) a pivot (max(分數) for 課程 in (' + @sql + ')) b) m , 
+    (select 姓名 , cast(avg(分數*1.0) as decimal(18,2)) 平均分 , sum(分數) 總分 from tb group by 姓名) n 
+    where m.姓名 = n.姓名') 
     ```
 * 行轉列 
   * Postgresql
@@ -345,6 +395,24 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
     ```
   * SQL SERVER 2000
     ```
+    create table tb(姓名 varchar(10) , 語文 int , 數學 int , 物理 int) 
+    insert into tb values('張三',74,83,93) 
+    insert into tb values('李四',74,84,94) 
+    go 
+    
+    
+    --靜態SQL。 
+    select * from 
+    ( 
+    select 姓名 , 課程 = '語文' , 分數 = 語文 from tb 
+    union all 
+    select 姓名 , 課程 = '數學' , 分數 = 數學 from tb 
+    union all 
+    select 姓名 , 課程 = '物理' , 分數 = 物理 from tb 
+    ) t 
+    order by 姓名 , case 課程 when '語文' then 1 when '數學' then 2 when '物理' then 3 end 
+    
+    
     
     ```
 <br>
