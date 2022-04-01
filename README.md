@@ -376,9 +376,16 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
     (select 姓名 , cast(avg(分數*1.0) as decimal(18,2)) 平均分 , sum(分數) 總分 from tb group by 姓名) n 
     where m.姓名 = n.姓名') 
     ```
-  * Oracle
-  ```
-  ```
+  * Oracle：PIVOT(oracle11g)
+    * PIVOT 內需有聚集函數
+    * 將 course_type 列的欄位值轉換成列名
+    ```
+    SELECT class_name, student_name, chinese_result, math_result, created_date
+    FROM (SELECT class_name, student_name, course_type, result, created_date
+          FROM class_tmp_2) T
+    PIVOT(sum(result)
+      FOR course_type in ('語文' AS chinese_result, '數學' AS math_result)); 
+    ```
 * 行轉列 
   * Postgresql
     ```
@@ -430,16 +437,19 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
     exec(@sql + ' order by 姓名 ') 
     ```
   * SQL SERVER 2005
-  ```
-  --動態SQL
-  select 姓名 , 課程 , 分數 from tb unpivot (分數 for 課程 in([語文] , [數學] , [物理])) t 
+    ```
+    --動態SQL
+    select 姓名 , 課程 , 分數 from tb unpivot (分數 for 課程 in([語文] , [數學] , [物理])) t 
 
 
-  --動態SQL，同SQL SERVER 2000 動態SQL。
-  ```
-  * Oracle
-  ```
-  ```
+    --動態SQL，同SQL SERVER 2000 動態SQL。
+    ```
+  * Oracle：UNPIVOT(oracle11g)
+    ```
+    SELECT class_name, student_name, course_type, result, created_date
+    FROM class_tmp
+    UNPIVOT(result for course_type in (chinese_result, math_result))
+    ```
 <br>
 
 ## 參考資料：
