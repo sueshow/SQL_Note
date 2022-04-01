@@ -376,6 +376,21 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
     (select 姓名 , cast(avg(分數*1.0) as decimal(18,2)) 平均分 , sum(分數) 總分 from tb group by 姓名) n 
     where m.姓名 = n.姓名') 
     ```
+    
+    * SUTFF 函式的表達式是這樣的 STUFF(原字串, 起始位置, 移除長度, 替換字串)
+    ```
+    WITH SEND_MAIL AS (
+     SELECT distinct UserName as rece_name
+     FROM  [CIMS].[vw_MonthlyCalcUserInfo]
+     WHERE MenuName like '佣獎%'
+    )
+    SELECT distinct STUFF((
+                SELECT ',' + t1.rece_name
+                FROM SEND_MAIL t1
+                WHERE 1=1 
+                FOR XML PATH('')), 1, LEN(','), '') AS FieldBs
+    FROM SEND_MAIL t0;
+    ```
   * Oracle：PIVOT(oracle11g)
     * PIVOT 內需有聚集函數
     * 將 course_type 列的欄位值轉換成列名
@@ -385,6 +400,23 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
           FROM class_tmp_2) T
     PIVOT(sum(result)
       FOR course_type in ('語文' AS chinese_result, '數學' AS math_result)); 
+    ```
+    
+    ```
+    with temp as(  
+      select '台灣' nation ,'台北'      city from dual union all  
+      select '台灣' nation ,'台中'      city from dual union all  
+      select '台灣' nation ,'高雄'      city from dual union all 
+      select '日本' nation ,'北海道' city from dual union all  
+      select '日本' nation ,'東京'   city from dual union all  
+      select '日本' nation ,'大阪'   city from dual union all    
+      select '美國' nation ,'華盛頓' city from dual union all  
+      select '美國' nation ,'波士頓' city from dual union all  
+      select '美國' nation ,'紐約'   city from dual   
+    )  
+    select nation,listagg(city,'+') within GROUP (order by city) as city
+    from temp  
+    group by nation
     ```
 * 行轉列 
   * Postgresql
