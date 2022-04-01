@@ -493,3 +493,4 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
 * [regexp](https://dev.mysql.com/doc/refman/8.0/en/regexp.html)
 * [Array Functions and Operators](https://www.postgresql.org/docs/9.1/functions-array.html)
 * [SQL 橫轉豎 、豎專橫](https://www.itread01.com/content/1542125548.html)
+* [SQL Sever 直式轉成橫式](https://dotblogs.com.tw/nick0415/2018/05/22/133538)
