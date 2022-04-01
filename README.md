@@ -306,6 +306,40 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
 </table>
 <br>
 
+## 行列轉換
+### Postgresql
+* 列轉行
+```
+select * from test ;
+ name
+------
+ AA
+ BB
+ CC
+ 
+ select string_agg(name,',') from test;
+ string_agg
+------------
+ AA,BB,CC
+```
+* 行轉列 
+```
+select * from test ;
+   name
+-----------
+ A,B,C,D,E
+ 
+select regexp_split_to_table(name,',') from test;
+ regexp_split_to_table
+-----------------------
+ A
+ B
+ C
+ D
+ E
+```
+<br>
+
 ## 參考資料：
 * [Crosstab Query](https://stackoverflow.com/questions/3002499/postgresql-crosstab-query)
 * [Generate](https://www.postgresql.org/docs/9.1/functions-srf.html)
