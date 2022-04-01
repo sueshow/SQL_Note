@@ -355,7 +355,7 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
     ```
   * SQL SERVER 2005
     ```
-    --靜態SQL。 
+    --靜態SQL
     select * from (select * from tb) a pivot (max(分數) for 課程 in (語文,數學,物理)) b 
     
     select m.* , n.平均分 , n.總分 
@@ -364,7 +364,7 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
     where m.姓名 = n.姓名  
     
     
-    --動態SQL。 
+    --動態SQL
     declare @sql varchar(8000) 
     select @sql = isnull(@sql + ',' , '') + 課程 from tb group by 課程 
     exec ('select * from (select * from tb) a pivot (max(分數) for 課程 in (' + @sql + ')) b') 
@@ -376,6 +376,9 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
     (select 姓名 , cast(avg(分數*1.0) as decimal(18,2)) 平均分 , sum(分數) 總分 from tb group by 姓名) n 
     where m.姓名 = n.姓名') 
     ```
+  * Oracle
+  ```
+  ```
 * 行轉列 
   * Postgresql
     ```
@@ -401,7 +404,7 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
     go 
     
     
-    --靜態SQL。 
+    --靜態SQL
     select * from 
     ( 
     select 姓名 , 課程 = '語文' , 分數 = 語文 from tb 
@@ -409,12 +412,34 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
     select 姓名 , 課程 = '數學' , 分數 = 數學 from tb 
     union all 
     select 姓名 , 課程 = '物理' , 分數 = 物理 from tb 
+    union all 
+    select 姓名 as 姓名 , 課程 = '平均分' , 分數 = cast((語文 + 數學 + 物理)*1.0/3 as decimal(18,2)) from tb 
+    union all 
+    select 姓名 as 姓名 , 課程 = '總分' , 分數 = 語文 + 數學 + 物理 from tb 
     ) t 
-    order by 姓名 , case 課程 when '語文' then 1 when '數學' then 2 when '物理' then 3 end 
+    order by 姓名 , case 課程 when '語文' then 1 when '數學' then 2 when '物理' then 3 when '平均分' then 4 when '總分' then 5 end 
     
     
-    
+    --動態SQL
+    --呼叫系統表動態生態。 
+    declare @sql varchar(8000) 
+    select @sql = isnull(@sql + ' union all ' , '' ) + ' select 姓名 , [課程] = ' + quotename(Name , '''') + ' , [分數] = ' + quotename(Name) + ' from tb' 
+    from syscolumns 
+    where name! = N'姓名' and ID = object_id('tb') --表名tb，不包含列名為姓名的其它列 
+    order by colid asc 
+    exec(@sql + ' order by 姓名 ') 
     ```
+  * SQL SERVER 2005
+  ```
+  --動態SQL
+  select 姓名 , 課程 , 分數 from tb unpivot (分數 for 課程 in([語文] , [數學] , [物理])) t 
+
+
+  --動態SQL，同SQL SERVER 2000 動態SQL。
+  ```
+  * Oracle
+  ```
+  ```
 <br>
 
 ## 參考資料：
@@ -425,3 +450,4 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
 * [regex](https://dataschool.com/how-to-teach-people-sql/how-regex-works-in-sql/)
 * [regexp](https://dev.mysql.com/doc/refman/8.0/en/regexp.html)
 * [Array Functions and Operators](https://www.postgresql.org/docs/9.1/functions-array.html)
+* [SQL 橫轉豎 、豎專橫](https://www.itread01.com/content/1542125548.html)
