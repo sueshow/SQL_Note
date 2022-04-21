@@ -372,10 +372,31 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
     --方法4：按數組格式輸出       
     select deptno, array_agg(ename) 
     from jinbo.employee group by deptno;
+
+    --方法4結果    
      deptno |   array_agg    
     --------+----------------
          20 | {JONES}
          30 | {ALLEN,MARTIN}
+
+
+    --方法5-1：去重複元素
+    select array_agg(distinct deptno) 
+    from jinbo.employee;
+    
+    --方法5-1結果
+    array_agg 
+    -----------
+     {20,30}
+
+    --方法5-2：去重複元素，且排序
+    select array_agg(distinct deptno order by deptno desc) 
+    from jinbo.employee;
+    
+    --方法5-2結果
+     array_agg 
+    -----------
+     {30,20}
     ˋˋˋ
   * SQL SERVER 2000
     ```
