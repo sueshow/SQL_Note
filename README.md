@@ -325,7 +325,7 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
      AA,BB,CC
     ```
  
-    ˋˋˋ
+    ```
     create table jinbo.employee (empno smallint, ename varchar(20), job varchar(20), mgr smallint, hiredate date, sal bigint, comm bigint, deptno smallint);
 
     insert into jinbo.employee(empno,ename,job, mgr, hiredate, sal, comm, deptno) values (7499, 'ALLEN', 'SALEMAN', 7698, '2014-11-12', 16000, 300, 30);
