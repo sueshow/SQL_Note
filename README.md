@@ -309,6 +309,8 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
 ## 行列轉換
 * 列轉行
   * Postgresql
+    * string_agg(expression, delimiter)：直接把一個表達式變成字符串
+    * array_agg(expression)：把表達式變成一個數組，一般配合 array_to_string() 使用
     ```
     select * from test ;
      name
@@ -322,6 +324,59 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
     ------------
      AA,BB,CC
     ```
+ 
+    ˋˋˋ
+    create table jinbo.employee (empno smallint, ename varchar(20), job varchar(20), mgr smallint, hiredate date, sal bigint, comm bigint, deptno smallint);
+
+    insert into jinbo.employee(empno,ename,job, mgr, hiredate, sal, comm, deptno) values (7499, 'ALLEN', 'SALEMAN', 7698, '2014-11-12', 16000, 300, 30);
+
+    insert into jinbo.employee(empno,ename,job, mgr, hiredate, sal, comm, deptno) values (7499, 'ALLEN', 'SALEMAN', 7698, '2014-11-12', 16000, 300, 30);
+
+    insert into jinbo.employee(empno,ename,job, mgr, hiredate, sal, comm, deptno) values (7654, 'MARTIN', 'SALEMAN', 7698, '2016-09-12', 12000, 1400, 30);
+
+    select * from jinbo.employee;
+     empno | ename  |   job   | mgr  |  hiredate  |  sal  | comm | deptno 
+    -------+--------+---------+------+------------+-------+------+--------
+      7499 | ALLEN  | SALEMAN | 7698 | 2014-11-12 | 16000 |  300 |     30
+      7566 | JONES  | MANAGER | 7839 | 2015-12-12 | 32000 |    0 |     20
+      7654 | MARTIN | SALEMAN | 7698 | 2016-09-12 | 12000 | 1400 |     30
+    -----------------------------------
+    
+    
+    --方法1
+    select deptno, string_agg(ename, ',') 
+    from jinbo.employee group by deptno;
+
+    --方法2
+    select deptno, array_to_string(array_agg(ename),',')
+    from jinbo.employee group by deptno;
+    
+    --方法1和2的結果
+     deptno |  string_agg  
+    --------+--------------
+         20 | JONES
+         30 | ALLEN,MARTIN
+        
+        
+    --方法3：按ename倒敘合併
+    select deptno, string_agg(ename, ',' order by ename desc) 
+    from jinbo.employee group by deptno;
+    
+    --方法3結果
+     deptno |  string_agg  
+    --------+--------------
+         20 | JONES
+         30 | MARTIN,ALLEN
+         
+         
+    --方法4：按數組格式輸出       
+    select deptno, array_agg(ename) 
+    from jinbo.employee group by deptno;
+     deptno |   array_agg    
+    --------+----------------
+         20 | {JONES}
+         30 | {ALLEN,MARTIN}
+    ˋˋˋ
   * SQL SERVER 2000
     ```
     create table tb(姓名 varchar(10) , 課程 varchar(10) , 分數 int) 
@@ -494,3 +549,4 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
 * [Array Functions and Operators](https://www.postgresql.org/docs/9.1/functions-array.html)
 * [SQL 橫轉豎 、豎專橫](https://www.itread01.com/content/1542125548.html)
 * [SQL Sever 直式轉成橫式](https://dotblogs.com.tw/nick0415/2018/05/22/133538)
+* [PostgreSql 聚合函数string_agg与array_agg](https://blog.csdn.net/u011944141/article/details/78902678)
