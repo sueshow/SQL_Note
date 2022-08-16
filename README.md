@@ -565,34 +565,6 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
 <br>
 
 
-## Comparing backup types
-* Full backups(完整備份)
-  * 整個數據集的完整副本，提供最好的保護
-  * 非常耗時並且通常需要大量的磁盤或磁帶容量
-  * SQL
-    * --truncate production table--
-    * --insert target table--
-* Incremental backups(增量備份)
-  * 為了提高備份速度並減少執行完整備份所需的存儲空間，僅備份自上次備份以來已更改的數據
-  * 恢復起來很耗時
-  * SQL
-    * --create temp table and insert table--
-    * --clean source data--
-    * --create temp table and insert table--
-    * --insert temp table--
-    * --create production table backup-- 
-    * --insert all production data into production backup table--
-    * --truncate production table--
-    * --insert target table--
-    * --drop temp table--
-* Differential backups(差異備份)
-  * 自上次完整備份以來更改的所有數據
-  * 相對於增量備份的優勢在於更短的恢復時間
-* Synthetic full backup(合成完整備份)
-* Incremental-forever backup(永久增量備份)
-<br>
-
-
 ## 參考資料：
 * [Crosstab Query](https://stackoverflow.com/questions/3002499/postgresql-crosstab-query)
 * [Generate](https://www.postgresql.org/docs/9.1/functions-srf.html)
@@ -604,4 +576,4 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
 * [SQL 橫轉豎 、豎專橫](https://www.itread01.com/content/1542125548.html)
 * [SQL Sever 直式轉成橫式](https://dotblogs.com.tw/nick0415/2018/05/22/133538)
 * [PostgreSql 聚合函数string_agg与array_agg](https://blog.csdn.net/u011944141/article/details/78902678)
-* [Comparing backup types](https://www.techtarget.com/searchdatabackup/tip/Data-backup-types-explained-Full-incremental-differential-and-incremental-forever-backup)
+
