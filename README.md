@@ -322,9 +322,14 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
          when length(addr)=9 and addr like '嘉義市%' then 'Y'
          when length(addr)=9 and addr like '新竹市%' then 'Y'
               else 'N'
-    end::varchar(2)  as eff_type
+    end::varchar(2) 
     → 不含「測試」、「體驗」、「NA」且地址長度大於9 標註 Y
       嘉義市、新竹市且地址長度等於9 標註 Y
+    ```
+  * translate & replace
+    ```
+    trim(replace(translate(addr,'０１２３４５６７８９ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ','0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'),' ',''))
+    → 全形轉換半形
     ```
 <br>
 
