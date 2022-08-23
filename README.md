@@ -326,6 +326,12 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
     → 不含「測試」、「體驗」、「NA」且地址長度大於9 標註 Y
       嘉義市、新竹市且地址長度等於9 標註 Y
     ```
+    ```
+    case when (addr ~ E'[市](\-)|(\--)' or cln_addr ~ E'[縣](\-)|(\--)' ) 
+         then regexp_replace(addr, E'(\\-)|(\\--)', '') 
+         else cln_addr 
+    end
+    ```
   * translate & replace
     ```
     trim(replace(translate(addr,'０１２３４５６７８９ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ','0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'),' ',''))
