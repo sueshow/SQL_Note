@@ -315,7 +315,7 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
     CONCAT('AA', RegExp_substr(NAME, '[0-9]{3,4}購物金'))
     →AA999購物金
     ```
-  * E'(測試)|(體驗)|(NA$)
+  * E'(XX)|(YY)|(ZZ)'
     ```
     case when addr !~ E'(測試)|(體驗)|(NA$)'
               and length(addr)>9 then 'Y' 
