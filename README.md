@@ -309,6 +309,25 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
 </table>
 <br>
 
+* SQL範例
+  * RegExp_substr
+    ```
+    CONCAT('AA', RegExp_substr(NAME, '[0-9]{3,4}購物金'))
+    →AA999購物金
+    ```
+  * E'(測試)|(體驗)|(NA$)
+    ```
+    case when addr !~ E'(測試)|(體驗)|(NA$)'
+              and length(addr)>9 then 'Y' 
+         when length(addr)=9 and addr like '嘉義市%' then 'Y'
+         when length(addr)=9 and addr like '新竹市%' then 'Y'
+              else 'N'
+    end::varchar(2)  as eff_type
+    → 不含「測試」、「體驗」、「NA」 標註 Y
+      嘉義市、新竹市且地址長度等於9 標註 Y
+    ```
+<br>
+
 
 ## 行列轉換
 * 列轉行
