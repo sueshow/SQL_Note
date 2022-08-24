@@ -606,4 +606,4 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
 * [SQL 橫轉豎 、豎專橫](https://www.itread01.com/content/1542125548.html)
 * [SQL Sever 直式轉成橫式](https://dotblogs.com.tw/nick0415/2018/05/22/133538)
 * [PostgreSql 聚合函数string_agg与array_agg](https://blog.csdn.net/u011944141/article/details/78902678)
-
+* [RegEx101](https://regex101.com/)
