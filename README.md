@@ -337,7 +337,7 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
     translate(addr,'０１２３４５６７８９ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ','0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ')
     → 全形轉換半形
     ```
-  * 重要符號
+  * 常用符號
     <table border="1" width="15%">
       <tr>
         <th width="5%">符號</a>
@@ -346,10 +346,16 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
         <th width="5%">含意</a>
       </tr>
       <tr>
+        <td> \t </td>
+        <td> 9 </td>
+        <td> CHR(9) </td>
+        <td> Tab 空格鍵 </td>
+      </tr>
+      <tr>
         <td> \n </td>
         <td> 10 </td>
         <td> CHR(10) </td>
-        <td> 換行LF (Line Feed) </td>
+        <td> 換行鍵LF (Line Feed) </td>
       </tr>
       <tr>
         <td> \r </td>
@@ -358,10 +364,34 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
         <td> 回車CR (Carriage Return) </td>
       </tr>
       <tr>
-        <td> \t </td>
-        <td> 9 </td>
-        <td> CHR(9) </td>
-        <td> Tab </td>
+        <td> " </td>
+        <td> 34 </td>
+        <td> CHR(34) </td>
+        <td> Quotation mark ( " in HTML) </td>
+      </tr>
+      <tr>
+        <td> & </td>
+        <td> 38 </td>
+        <td> CHR(38) </td>
+        <td> Ampersand </td>
+      </tr>
+      <tr>
+        <td> ` </td>
+        <td> 39 </td>
+        <td> CHR(39) </td>
+        <td> Closing single quote (apostrophe) </td>
+      </tr>
+      <tr>
+        <td> < </td>
+        <td> 60 </td>
+        <td> CHR(60) </td>
+        <td> Less than sign (< in HTML) </td>
+      </tr>
+      <tr>
+        <td> > </td>
+        <td> 62 </td>
+        <td> CHR(62) </td>
+        <td> Greater than sign (> in HTML) </td>
       </tr>
     </table>
 <br>
