@@ -334,9 +334,30 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
     ```
   * translate & replace
     ```
-    trim(replace(translate(addr,'０１２３４５６７８９ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ','0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'),' ',''))
+    translate(addr,'０１２３４５６７８９ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ','0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ')
     → 全形轉換半形
     ```
+  * 重要符號
+    <table border="1" width="15%">
+      <tr>
+        <th width="5%">符號</a>
+        <th width="5%">ASC II碼</a>
+        <th width="5%">語法</a>
+        <th width="5%">含意</a>
+      </tr>
+      <tr>
+        <td> \n </td>
+        <td> 10 </td>
+        <td> CHR(10) </td>
+        <td> 換行NL </td>
+      </tr>
+      <tr>
+        <td> \r </td>
+        <td> 13 </td>
+        <td> CHR(13) </td>
+        <td> 回車CR </td>
+      </tr>
+    </table>
 <br>
 
 
