@@ -338,12 +338,12 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
     → 全形轉換半形
     ```
   * 常用符號
-    <table border="1" width="15%">
+    <table border="1" width="25%">
       <tr>
         <th width="5%">符號</a>
         <th width="5%">ASCII碼 [ˈæski]</a>
         <th width="5%">語法</a>
-        <th width="5%">含意</a>
+        <th width="10%">含意</a>
       </tr>
       <tr>
         <td> \t </td>
