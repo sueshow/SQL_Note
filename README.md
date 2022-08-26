@@ -341,7 +341,7 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
     <table border="1" width="15%">
       <tr>
         <th width="5%">符號</a>
-        <th width="5%">ASC II碼</a>
+        <th width="5%">ASCII碼 [ˈæski]</a>
         <th width="5%">語法</a>
         <th width="5%">含意</a>
       </tr>
@@ -349,13 +349,19 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
         <td> \n </td>
         <td> 10 </td>
         <td> CHR(10) </td>
-        <td> 換行NL </td>
+        <td> 換行LF (Line Feed) </td>
       </tr>
       <tr>
         <td> \r </td>
         <td> 13 </td>
         <td> CHR(13) </td>
-        <td> 回車CR </td>
+        <td> 回車CR (Carriage Return) </td>
+      </tr>
+      <tr>
+        <td> \t </td>
+        <td> 9 </td>
+        <td> CHR(9) </td>
+        <td> Tab </td>
       </tr>
     </table>
 <br>
@@ -628,3 +634,4 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
 * [SQL Sever 直式轉成橫式](https://dotblogs.com.tw/nick0415/2018/05/22/133538)
 * [PostgreSql 聚合函数string_agg与array_agg](https://blog.csdn.net/u011944141/article/details/78902678)
 * [RegEx101](https://regex101.com/)
+* [ASCII 控制字符](http://www.eion.com.tw/Blogger/?Pid=1128)
