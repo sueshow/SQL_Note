@@ -724,8 +724,33 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
                1. Commit後，資料仍保留    <br>
                2. 不管有無 Commit，若要 Drop Table 前，一定要先 Truncate Table 才可以  <br>
                3. Session 結束時，資料會自動刪除      <br>
+             * select userenv('sid') from dual;
              </td>
         <td>  </td>
+      </tr>
+      <tr>
+        <td>  </td>
+        <td>  </td>
+        <td>  </td>
+        <td> * 會話級                     <br>
+               CREATE TEMPORARY TABLE [table_name] ( <br>
+                    [col_name1]  [data_type1]        <br>       
+                  , [col_name2]  [data_type2]        <br> 
+                  , ...                              <br>
+               );                                    <br>
+             * 事務級                                <br>
+               CREATE TEMPORARY TABLE [table_name] ( <br>
+                    [col_name1]  [data_type1]        <br>       
+                  , [col_name2]  [data_type2]        <br> 
+                  , ...                              <br>
+               ) on commit [delete/preserve/drop] rows;   <br>
+               --delete：結束後 truncate     <br>
+               --preserve：結束後保留        <br>
+               --drop：結束後刪除            <br>
+               --只有 Session 可見的，不同 Session 可建立相同的暫存表
+               --Session結束後臨時表也刪除
+             * select PG_BACKEND_PID();
+        </td>
       </tr>
     </table>
     
@@ -767,7 +792,7 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
         <td> 困難 </td>
       </tr>
   </table>
-  
+<br>  
 
 
 ## 參考資料：
