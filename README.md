@@ -653,7 +653,7 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
 
 
 ## Temp Table
-* 
+* Temp Table 說明
   <table border="1" width="12%">
       <tr>
         <th width="2%"> 類型 </a>
@@ -663,36 +663,90 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
       </tr>
       <tr>
         <td> '#temp' </td>
-        <td> * 儲存於 tempdb 中 <br>
+        <td> '#temp' <br>
+             * 儲存於 tempdb 中 <br>
              * 只可在建立的 Session 中使用 <br>
              * 不會自動刪除，自動刪除時機為 DB Service <br>
              * Debug 的好幫手 <br>
-             * 建立 <br>
-               * 直接 create temp-table <br>
-               * select * into [table_name] from [資料表] where [條件] </td>
+             * 建立方式一：直接 create temp-table <br>
+             * 建立方式二：select * into [table_name] from [資料表] where [條件] </td>
         <td>  </td>
         <td>  </td>
       </tr>
       <tr>
         <td> '##temp' </td>
-        <td>  </td>
+        <td> '##temp' <br>
+             * 儲存於 tempdb 中 <br>
+             * 可跨 Session 使用，屬於全域變數 <br>
+             * 不會自動刪除，自動刪除時機為 DB Service <br>
+             * 建立方式一：直接 create temp-table <br>
+             * 建立方式二：select * into [table_name] from [資料表] where [條件] </td>
         <td>  </td>
         <td>  </td>
       </tr>
       <tr>
         <td> '@temp' </td>
-        <td>  </td>
+        <td> '@temp' <br>
+             * 儲存於記憶體中 <br>
+             * 只可在建立的 Session 中使用 <br>
+             * 當下執行完畢即自動刪除 <br>
+             * 建立方式：declare table </td>
         <td>  </td>
         <td>  </td>
       </tr>
       <tr>
         <td> CTE </td>
-        <td>  </td>
+        <td> CTE <br>
+             * 儲存於記憶體中 <br>
+             * 只可在建立的 Session 中使用 <br>
+             * 當下執行完畢即自動刪除 <br>
+             * 建立方式：with [table-name] as <br>
+             * 適合遞迴處理 </td>
         <td>  </td>
         <td>  </td>
       </tr>
     </table>
-      
+    
+* Temp Table 比較
+  <table border="1" width="12%">
+      <tr>
+        <th width="2%"> 差異 </a>
+        <th width="5%"> '#temp' </a>
+        <th width="5%"> '@temp'  </a>
+      </tr>
+      <tr>
+        <td> 儲存 </td>
+        <td> tempdb </td>
+        <td> 記憶體 </td>
+      </tr>
+      <tr>
+        <td> 效能 </td>
+        <td> 需花費I/O </td>
+        <td> 較好 </td>
+      </tr>
+      <tr>
+        <td> 建立 Index </td>
+        <td> Y </td>
+        <td> N </td>
+      </tr>
+      <tr>
+        <td> 自動 drop table </td>
+        <td> N </td>
+        <td> Y </td>
+      </tr>
+      <tr>
+        <td> 適用場景 </td>
+        <td> 資料量大 </td>
+        <td> 資料量小 </td>
+      </tr>
+      <tr>
+        <td> Debug </td>
+        <td> 容易 </td>
+        <td> 困難 </td>
+      </tr>
+  </table>
+  
+
 
 ## 參考資料：
 * [Crosstab Query](https://stackoverflow.com/questions/3002499/postgresql-crosstab-query)
