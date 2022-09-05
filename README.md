@@ -120,16 +120,20 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
 * 非有效的查詢參數：`NOT`、`!=`、`<>`、`!<`、`!>`、`NOT EXISTS`、`NOT IN`、`NOT LIKE`
 * 影響效能的寫法：
   * 條件式中轉換欄位類型
-  * 條件式中對欄位做運算
-  * 條件式中對欄位使用函數
+  * 條件式中對欄位做「運算」或「使用函數」 
   * select 撈取不必要的欄位
   * 負向查詢
   * 少用 union(去重複)，可使用 union all 替代
   * 少用子查詢
-  * 用 exists/not exists 取代 in/not in
+  * 用「exists/not exists」取代「in/not in」
+  * 用「union/union all」取代「or」
+  * 用「between」取代「in」連續數字
+  * 需要查詢其他資料表資料時，使用「inner join」；不需要查詢其他資料表資料時，使用「exists/in」
   * 不須排序的資料就別用 order by
   * 善用 CTE(Common Table Expression) 改善效能
   * 避免執行不必要的查詢
+  * 針對查詢條件欄位建立 Index
+  * 「小表串大表」 優於 「大表串小表」  
 <br>
 
 
@@ -654,7 +658,7 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
 
 ## Temp Table
 * Temp Table 說明
-  <table border="1" width="12%">
+  <table border="1" width="20%">
       <tr>
         <th width="5%"> MS SQL <br>
                         SQL Server </a>
