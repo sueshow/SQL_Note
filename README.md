@@ -652,6 +652,48 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
 <br>
 
 
+## Temp Table
+* 
+  <table border="1" width="12%">
+      <tr>
+        <th width="2%"> 類型 </a>
+        <th width="5%"> MS SQL/SQL Server </a>
+        <th width="5%"> Oracle </a>
+        <th width="5%"> Posgret </a>
+      </tr>
+      <tr>
+        <td> '#temp' </td>
+        <td> * 儲存於 tempdb 中 <br>
+             * 只可在建立的 Session 中使用 <br>
+             * 不會自動刪除，自動刪除時機為 DB Service <br>
+             * Debug 的好幫手 <br>
+             * 建立 <br>
+               * 直接 create temp-table <br>
+               * select * into [table_name] from [資料表] where [條件] </td>
+        <td>  </td>
+        <td>  </td>
+      </tr>
+      <tr>
+        <td> '##temp' </td>
+        <td>  </td>
+        <td>  </td>
+        <td>  </td>
+      </tr>
+      <tr>
+        <td> '@temp' </td>
+        <td>  </td>
+        <td>  </td>
+        <td>  </td>
+      </tr>
+      <tr>
+        <td> CTE </td>
+        <td>  </td>
+        <td>  </td>
+        <td>  </td>
+      </tr>
+    </table>
+      
+
 ## 參考資料：
 * [Crosstab Query](https://stackoverflow.com/questions/3002499/postgresql-crosstab-query)
 * [Generate](https://www.postgresql.org/docs/9.1/functions-srf.html)
