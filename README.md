@@ -711,8 +711,8 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
   <table border="1" width="12%">
       <tr>
         <th width="2%"> 差異 </a>
-        <th width="5%"> '#temp' </a>
-        <th width="5%"> '@temp'  </a>
+        <th width="5%"> #temp </a>
+        <th width="5%"> @temp  </a>
       </tr>
       <tr>
         <td> 儲存 </td>
