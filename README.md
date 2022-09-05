@@ -656,46 +656,46 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
 * Temp Table 說明
   <table border="1" width="12%">
       <tr>
-        <th width="2%"> 類型 </a>
-        <th width="5%"> MS SQL/SQL Server </a>
+        <th width="5%"> MS SQL <br>
+                        SQL Server </a>
         <th width="5%"> Oracle </a>
+        <th width="5%"> Oracle 說明</a>
         <th width="5%"> Posgret </a>
       </tr>
       <tr>
-        <td> '#temp' </td>
-        <td> '#temp' <br>
+        <td> #temp <br>
              * 儲存於 tempdb 中 <br>
              * 只可在建立的 Session 中使用 <br>
              * 不會自動刪除，自動刪除時機為 DB Service <br>
              * Debug 的好幫手 <br>
-             * 建立方式一：直接 create temp-table <br>
+             * 建立方式一：直接 create table [table_name] <br>
              * 建立方式二：select * into [table_name] from [資料表] where [條件] </td>
+        <td>  </td>
         <td>  </td>
         <td>  </td>
       </tr>
       <tr>
-        <td> '##temp' </td>
-        <td> '##temp' <br>
+        <td> ##temp <br>
              * 儲存於 tempdb 中 <br>
              * 可跨 Session 使用，屬於全域變數 <br>
              * 不會自動刪除，自動刪除時機為 DB Service <br>
-             * 建立方式一：直接 create temp-table <br>
+             * 建立方式一：直接 create table [table_name] <br>
              * 建立方式二：select * into [table_name] from [資料表] where [條件] </td>
         <td>  </td>
         <td>  </td>
+        <td>  </td>
       </tr>
       <tr>
-        <td> '@temp' </td>
-        <td> '@temp' <br>
+        <td> @temp <br>
              * 儲存於記憶體中 <br>
              * 只可在建立的 Session 中使用 <br>
              * 當下執行完畢即自動刪除 <br>
-             * 建立方式：declare table </td>
+             * 建立方式：declare [table_name] table </td>
+        <td>  </td>
         <td>  </td>
         <td>  </td>
       </tr>
       <tr>
-        <td> CTE </td>
         <td> CTE <br>
              * 儲存於記憶體中 <br>
              * 只可在建立的 Session 中使用 <br>
@@ -703,6 +703,28 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
              * 建立方式：with [table-name] as <br>
              * 適合遞迴處理 </td>
         <td>  </td>
+        <td>  </td>
+        <td>  </td>
+      </tr>
+      <tr>
+        <td>  </td>
+        <td> CREATE GLOBAL TEMPORARY TABLE [table_name] ( <br>
+                  [col_name1]  [data_type1]       <br>       
+                , [col_name2]  [data_type2]       <br> 
+                , ...                             <br>
+             ) ON COMMIT [Delete/Preserve] ROWS;  <br>
+             --default：on commit delete rows
+             --所有 Session 都是可見的
+        </td>
+        <td> * 事務級 deletel：          <br>
+               1. Commit後，資料被刪除    <br>
+               2. 不管有無 Commit，都可以直接 Drop Table  <br>
+               3. Session 結束時，資料會自動刪除      <br>
+             * 會話級 preserve：         <br>
+               1. Commit後，資料仍保留    <br>
+               2. 不管有無 Commit，若要 Drop Table 前，一定要先 Truncate Table 才可以  <br>
+               3. Session 結束時，資料會自動刪除      <br>
+             </td>
         <td>  </td>
       </tr>
     </table>
