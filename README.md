@@ -692,7 +692,7 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
       >       ) ON COMMIT [Delete/Preserve] ROWS;
       
     * 類型
-      * 事務級 deletel        
+      * 事務級 delete      
         * Commit後，資料被刪除    
         * 不管有無 Commit，都可以直接 Drop Table  
         * Session 結束時，資料會自動刪除      
