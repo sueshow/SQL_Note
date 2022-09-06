@@ -702,7 +702,7 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
         * Session 結束時，資料會自動刪除      
     * 說明
       * default：on commit delete rows
-      * 所有 Session 都可見的
+      * 所有 Session 都可見
         > select userenv('sid') from dual;
         
   * Posgret
@@ -725,7 +725,7 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
         * preserve：結束後保留資料
         * drop：結束後刪除 table  
     * 說明
-      * 只有 Session 可見的，不同 Session 可建立相同的暫存表
+      * 只有 Session 可見，不同 Session 可建立相同的暫存表(同結構/不同結構)
       * Session 結束後臨時表也刪除
         > select PG_BACKEND_PID();
     
