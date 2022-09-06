@@ -721,12 +721,12 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
         >         , ...                              
         >      ) on commit [delete/preserve/drop] rows;  
         
-        * delete：結束後 truncate     
-        * preserve：結束後保留    
-        * drop：結束後刪除          
+        * delete：結束後 truncate 資料
+        * preserve：結束後保留資料
+        * drop：結束後刪除 table  
     * 說明
       * 只有 Session 可見的，不同 Session 可建立相同的暫存表
-      * Session結束後臨時表也刪除
+      * Session 結束後臨時表也刪除
         > select PG_BACKEND_PID();
     
 * Temp Table 比較
