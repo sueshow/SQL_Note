@@ -327,8 +327,8 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
          when length(addr)=9 and addr like '新竹市%' then 'Y'
               else 'N'
     end::varchar(2) 
-    → 不含「測試」、「體驗」、「NA」且地址長度大於9 標註 Y
-      嘉義市、新竹市且地址長度等於9 標註 Y
+    → 不含「測試」、「體驗」、「NA」結束且長度大於9 標註 Y
+      嘉義市、新竹市且長度等於9 標註 Y
     ```
     ```
     case when (addr ~ E'[市](\-)|(\--)' or cln_addr ~ E'[縣](\-)|(\--)' ) 
