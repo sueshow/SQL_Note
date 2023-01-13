@@ -115,7 +115,8 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
 <br>
 
 
-## Search Argument (SARG)
+## SQL 效能調校
+### Search Argument (SARG)
 * 有效的查詢參數：`=`、`>`、`<`、`>=`、`<=`、`Between`、`Like`，如`like 'T%'`符合有效SARG，但`like '%T'`就不符合
 * 非有效的查詢參數：`NOT`、`!=`、`<>`、`!<`、`!>`、`NOT EXISTS`、`NOT IN`、`NOT LIKE`
 * 影響效能的寫法：
@@ -133,7 +134,61 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
   * 善用 CTE(Common Table Expression) 改善效能
   * 避免執行不必要的查詢
   * 針對查詢條件欄位建立 Index
-  * 「小表串大表」 優於 「大表串小表」  
+  * 「小表串大表」 優於 「大表串小表」
+
+### 效能調校
+* 資料庫設計與規劃
+  * Primary Key 欄位的「長度儘量小」
+    * 能用 small integer 就不要用 integer
+    * 不要用 varchar 或 nvarchar，應該用 char 或 nchar
+  * 文字資料欄位若長度固定，如：身分證字號，就不要用 varchar 或 nvarchar，應該用 char 或 nchar
+  * 文字資料欄位若長度不固定，如：地址，則應該用 varchar 或 nvarchar
+  * 設計欄位時，若其值可有可無，最好也給一個預設值，並設成「不允許 NULL」。因為 SQL Server 在存放和查詢有 NULL 的資料表時，會花費額外的運算動作
+  * 若一個資料表的欄位過多，應「垂直切割」成兩個以上的資料表，並用同名的 Primary Key 一對多連結起來
+* 適當地建立索引
+  * 記得幫「Foreign Key」欄位建立索引，即使是很少被 JOIN 的資料表亦然
+  * 替「常被查詢」或「排序」的欄位建立索引，如：常被當作 WHERE 子句條件的欄位
+  * 用來建立索引的欄位，「長度不應過長」、「重複性應較低」，前者不要用超過 20 個位元組的欄位(如地址)，後者如姓名
+  * 不宜替過多欄位建立索引，否則反而會影響到新增、修改、刪除的效能，尤其是以線上交易 (OLTP) 為主的網站資料庫
+  * 若資料表存放的資料很「少」，就「不必刻意建立索引」，否則可能資料庫沿著索引樹狀結構去搜尋索引中的資料，反而比掃描整個資料表還慢
+  * 若查詢時符合條件的資料很多，則透過「非叢集索引」搜尋的效能，可能反而不如整個資料表逐筆掃描
+  * 建立「叢集索引」的欄位選擇至為重要，會影響到整個索引結構的效能。要用來建立「叢集索引」的欄位，務必選擇「整數」型別(鍵值會較小)、唯一、不可為 NULL
+* 適當地使用索引
+  * 以常數字元開頭才會使用到索引，若以萬用字元(%)開頭則不會使用索引
+  * 執行完成後按 Ctrl+L，可檢視「執行計畫」，關注成本(CBO)高、statistics io 頻率高、statistics time 較長的高成本作業
+  * 「負向查詢」(如NOT、!=、<>、!>、!<、NOT EXISTAS、NOT IN、NOT LIKE)常會讓「查詢最佳化程式」無法有效地使用索引，最好能用其他運算和語法改寫(非絕對)
+  * 避免讓 WHERE 子句中的欄位，進行字串串接或數字運算，否則可能導致「查詢最佳化程式」無法直接使用索引，而改採叢集索引掃描(非絕對)
+  * 資料表中的資料，會依照「叢集索引」欄位的順序存放，因此當您下 BETWEEN、GROUP BY、ORDER BY 時若有包含「叢集索引」欄位，由於資料已在資料表中排序好，因此可提升查詢速度
+  * 若使用「複合索引」，要注意索引順序上的第一個欄位，才適合當作過濾條件
+* 避免在 WHERE 子句中對欄位使用函數
+  * 範例說明
+    ```
+    SELECT * FROM Orders WHERE DATEPART(yyyy, OrderDate) = 1996 AND DATEPART(mm, OrderDate)=7
+    --可改成
+    SELECT * FROM Orders WHERE OrderDate BETWEEN '19960701' AND '19960731'
+    ```
+    
+    ```
+    SELECT * FROM Orders WHERE SUBSTRING(CustomerID, 1, 1) = 'D'
+    --可改成
+    SELECT * FROM Orders WHERE CustomerID LIKE 'D%' 
+    ```
+* AND 與 OR 的使用
+  * 在 AND 運算中，「只要有一個」條件有用到索引，即可大幅提升查詢速度
+  * 在 OR 運算中，要「所有的」條件都有可用的索引，才能使用索引來提升查詢速度，可用 UNION 聯集適當地改善
+* 適當地使用子查詢
+  * 相較於「子查詢 (Subquery)」，較建議用 JOIN 完成的查詢，多數情況下，JOIN 的效能會比子查詢較佳
+  * 子查詢類型
+    * 獨立子查詢：查詢的內容可單獨執行
+    * 關聯子查詢：無法單獨執行，即外層每一次查詢的動作都需要引用內層查詢的資料，或內層每一次查詢的動作都需要參考外層查詢的資料
+  * ROW_NUMBER 函數加上「分群 (PARTITION BY)」等功能，執行效能極佳 
+* 其他查詢技巧
+  * DISTINCT、ORDER BY 語法，會讓資料庫做額外的計算
+  * 聯集若沒有要剔除重複資料的需求，使用 UNION ALL 會比 UNION 更佳，因為後者會加入類似 DISTINCT 的演算法
+  * 在 SQL Server 2005 版本中，存取資料庫物件時，最好明確指定該物件的「結構描述 (Schema)」，也就是使用兩節式名稱
+* 儘可能用 Stored Procedure 取代前端應用程式直接存取資料表
+  * Stored Procedure 除了經過事先編譯、效能較好以外，亦可節省 SQL 陳述式傳遞的頻寬，也方便商業邏輯的重複使用。再搭配自訂函數和 View 的使用，將來若要修改資料表結構、重新切割或反正規化時亦較方便
+* 儘可能在資料來源層，就先過濾資料
 <br>
 
 
@@ -783,3 +838,4 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
 * [PostgreSql 聚合函数string_agg与array_agg](https://blog.csdn.net/u011944141/article/details/78902678)
 * [RegEx101](https://regex101.com/)
 * [ASCII 控制字符](http://www.eion.com.tw/Blogger/?Pid=1128)
+* [SQL 效能調校](https://sweeteason.pixnet.net/blog/post/36954495-sql-%E6%95%88%E8%83%BD%E8%AA%BF%E6%A0%A1)
