@@ -157,7 +157,7 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
   * 以常數字元開頭才會使用到索引，若以萬用字元(%)開頭則不會使用索引
   * 執行完成後按 Ctrl+L，可檢視「執行計畫」，關注成本(CBO)高、statistics io 頻率高、statistics time 較長的高成本作業
   * 「負向查詢」(如NOT、!=、<>、!>、!<、NOT EXISTAS、NOT IN、NOT LIKE)常會讓「查詢最佳化程式」無法有效地使用索引，最好能用其他運算和語法改寫(非絕對)
-  * 避免讓 WHERE 子句中的欄位，進行字串串接或數字運算，否則可能導致「查詢最佳化程式」無法直接使用索引，而改採叢集索引掃描(非絕對)
+  * 避免讓 WHERE 子句中的欄位，進行字串串接或數字運算(使用 function)，否則可能導致「查詢最佳化程式」無法直接使用索引，而改採叢集索引掃描(非絕對)
   * 資料表中的資料，會依照「叢集索引」欄位的順序存放，因此當您下 BETWEEN、GROUP BY、ORDER BY 時若有包含「叢集索引」欄位，由於資料已在資料表中排序好，因此可提升查詢速度
   * 若使用「複合索引」，要注意索引順序上的第一個欄位，才適合當作過濾條件
 * 避免在 WHERE 子句中對欄位使用函數
@@ -185,7 +185,9 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
 * 其他查詢技巧
   * DISTINCT、ORDER BY 語法，會讓資料庫做額外的計算
   * 聯集若沒有要剔除重複資料的需求，使用 UNION ALL 會比 UNION 更佳，因為後者會加入類似 DISTINCT 的演算法
+  * SELECT 最小需求的資料列與欄位，不要 SELECT *
   * 在 SQL Server 2005 版本中，存取資料庫物件時，最好明確指定該物件的「結構描述 (Schema)」，也就是使用兩節式名稱
+  * 使用 CTE 或者 EXISTS 的方式，先縮小資料的範圍，避免大資料 JOIN 行為
 * 儘可能用 Stored Procedure 取代前端應用程式直接存取資料表
   * Stored Procedure 除了經過事先編譯、效能較好以外，亦可節省 SQL 陳述式傳遞的頻寬，也方便商業邏輯的重複使用。再搭配自訂函數和 View 的使用，將來若要修改資料表結構、重新切割或反正規化時亦較方便
 * 儘可能在資料來源層，就先過濾資料
