@@ -88,32 +88,6 @@
 <br>
 
 
-## Crosstab Query
-* 範例：json_object_agg In PostgreSQL  
-```
-CREATE TEMP TABLE t (
-  section   text
-, status    text
-, ct        integer  -- don't use "count" as column name.
-);
-
-INSERT INTO t VALUES 
-  ('A', 'Active', 1), ('A', 'Inactive', 2)
-, ('B', 'Active', 4), ('B', 'Inactive', 5)
-                   , ('C', 'Inactive', 7); 
-
-
-SELECT section,
-       (obj ->> 'Active')::int AS active,
-       (obj ->> 'Inactive')::int AS inactive
-FROM (SELECT section, json_object_agg(status,ct) AS obj
-      FROM t
-      GROUP BY section
-     )X;
-```
-<br>
-
-
 ## SQL 效能調校
 ### Search Argument (SARG)
 * 有效的查詢參數：`=`、`>`、`<`、`>=`、`<=`、`Between`、`Like`，如`like 'T%'`符合有效SARG，但`like '%T'`就不符合
@@ -189,6 +163,32 @@ FROM (SELECT section, json_object_agg(status,ct) AS obj
 * 儘可能用 Stored Procedure 取代前端應用程式直接存取資料表
   * Stored Procedure 除了經過事先編譯、效能較好以外，亦可節省 SQL 陳述式傳遞的頻寬，也方便商業邏輯的重複使用。再搭配自訂函數和 View 的使用，將來若要修改資料表結構、重新切割或反正規化時亦較方便
 * 儘可能在資料來源層，就先過濾資料
+<br>
+
+
+## Crosstab Query
+* 範例：json_object_agg In PostgreSQL  
+```
+CREATE TEMP TABLE t (
+  section   text
+, status    text
+, ct        integer  -- don't use "count" as column name.
+);
+
+INSERT INTO t VALUES 
+  ('A', 'Active', 1), ('A', 'Inactive', 2)
+, ('B', 'Active', 4), ('B', 'Inactive', 5)
+                   , ('C', 'Inactive', 7); 
+
+
+SELECT section,
+       (obj ->> 'Active')::int AS active,
+       (obj ->> 'Inactive')::int AS inactive
+FROM (SELECT section, json_object_agg(status,ct) AS obj
+      FROM t
+      GROUP BY section
+     )X;
+```
 <br>
 
 
