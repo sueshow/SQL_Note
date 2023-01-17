@@ -108,7 +108,7 @@
   * 避免執行不必要的查詢
   * 針對查詢條件欄位建立 Index
   * 「小表串大表」 優於 「大表串小表」
-<br>
+
 ### 效能調校
 * 資料庫設計與規劃
   * Primary Key 欄位的「長度儘量小」
@@ -191,7 +191,7 @@
         GROUP BY section
        )X;
   ```
-<br>
+
 ### Generate
 * 範例：generate_series
   ```
@@ -202,7 +202,7 @@
   ```
   SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
   ```
-<br>
+
 ### Array 
 * Operators
   <table border="1" width="20%">
@@ -275,7 +275,7 @@
         <td> {4,5,6,7} </td>
     </tr>
   </table>
-<br>
+
 ### Regex in My SQL
 * Regular Expressions
   <table border="1" width="20%">
@@ -340,7 +340,7 @@
         <td>  </td>
     </tr>
   </table>
-<br>
+
 * Metacharacters
   <table border="1" width="35%">
     <tr>
@@ -398,7 +398,7 @@
         <td> coo, cool </td>
     </tr>
   </table>
-<br>
+
 * POSIX comparators
   <table border="1" width="30%">
     <tr>
@@ -448,7 +448,7 @@
         <td> False </td>
     </tr>
   </table>
-<br>
+
 * SQL範例
   * RegExp_substr
     ```
@@ -534,7 +534,7 @@
         <td> Greater than sign (> in HTML) </td>
       </tr>
     </table>
-<br>
+
 ### 行列轉換
 * 列轉行
   * Postgresql
