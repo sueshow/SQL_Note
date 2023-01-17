@@ -1,5 +1,93 @@
 # SQL
 
+## SQL：結構化查詢語言(Structured Query Language)
+* 類型：
+  * Transact-SQL (又稱T-SQL)
+    * 是在 Microsoft SQL Server 和 Sybase SQL Server 上的 ANSI SQL 實作
+  * PL-SQL (Procedural Language-SQL)
+    * 是甲骨文公司專有的 SQL 擴展語言
+* 名詞：
+  * DDL (Data Definition Language)：對資料庫物件 (如資料表，預存程序，函式或自訂型別等) 的新增、修改和刪除 (Create、Alter、Drop) 都使用此語法
+  * DML (Data Manipulation Language)：又稱 CRUD (Create/Retrieve/Update/Delete) 功能，意指資料的新增、擷取、修改、刪除 (Select、Insert、Delete、Update) 四個功能
+  * DCL (Data Control Language)：由資料庫所提供的保安功能，對於資料庫與資料庫物件的存取原則與權限 (Grant、Deny、Revoke)，都由 DCL 定義之
+* 函式：
+  <table border="1" width="40%">
+    <tr>
+        <th width="10%">函式</a>
+        <th width="10%">描述</a>
+        <th width="10%">函式</a>
+        <th width="10%">描述</a>
+    </tr>
+    <tr>
+        <td> AVG </td>
+        <td> 平均值 </td>
+        <td> COUNT </td>
+        <td> 計數 (不含Null) </td>
+    </tr>
+    <tr>
+        <td> FIRST </td>
+        <td> 第一個記錄的值 </td>
+        <td> SUM </td>
+        <td> 求和 </td>
+    </tr>
+    <tr>
+        <td> MAX </td>
+        <td> 最大值 </td>
+        <td> MIN </td>
+        <td> 最小值 </td>
+    </tr>
+    <tr>
+        <td> STDEV </td>
+        <td> 樣本標準差 </td>
+        <td> STDEVP </td>
+        <td> 總體標準差 </td>
+    </tr>
+    <tr>
+        <td> VAR </td>
+        <td> 樣本方差 </td>
+        <td> VARP </td>
+        <td> 總體方差 </td>
+    </tr>
+    <tr>
+        <td> UCASE </td>
+        <td> 轉化為全大寫字母 </td>
+        <td> LCASE </td>
+        <td> 轉化為全小寫字母 </td>
+    </tr>
+    <tr>
+        <td> MID </td>
+        <td> 取中值 </td>
+        <td> LEN </td>
+        <td> 計算字串長度 </td>
+    </tr>
+    <tr>
+        <td> INSTR </td>
+        <td> 獲得子字串在母字串的起始位置 </td>
+        <td> FORMAT </td>
+        <td> 字串格式化 </td>
+    </tr>
+    <tr>
+        <td> LEFT </td>
+        <td> 取字串左邊子串 </td>
+        <td> RIGHT </td>
+        <td> 取字串右邊子串 </td>   
+    </tr>
+    <tr>
+        <td> ROUND </td>
+        <td> 數值四捨五入取整 </td>
+        <td> MOD </td>
+        <td> 取餘 </td>   
+    </tr>
+    <tr>
+        <td> NOW </td>
+        <td> 獲得當前時間的值 </td>
+        <td> DATEDIFF </td>
+        <td> 獲得兩個時間的差值 </td>   
+    </tr>
+  </table>
+<br>
+
+
 ## Crosstab Query
 * 範例：json_object_agg In PostgreSQL  
 ```
@@ -26,6 +114,84 @@ FROM (SELECT section, json_object_agg(status,ct) AS obj
 <br>
 
 
+## SQL 效能調校
+### Search Argument (SARG)
+* 有效的查詢參數：`=`、`>`、`<`、`>=`、`<=`、`Between`、`Like`，如`like 'T%'`符合有效SARG，但`like '%T'`就不符合
+* 非有效的查詢參數：`NOT`、`!=`、`<>`、`!<`、`!>`、`NOT EXISTS`、`NOT IN`、`NOT LIKE`
+* 影響效能的寫法：
+  * 條件式中轉換欄位類型
+  * 條件式中對欄位做「運算」或「使用函數」 
+  * select 撈取不必要的欄位
+  * 負向查詢
+  * 少用 union(去重複)，可使用 union all 替代
+  * 少用子查詢
+  * 用「exists/not exists」取代「in/not in」
+  * 用「union/union all」取代「or」
+  * 用「between」取代「in」連續數字
+  * 需要查詢其他資料表資料時，使用「inner join」；不需要查詢其他資料表資料時，使用「exists/in」
+  * 不須排序的資料就別用 order by
+  * 善用 CTE(Common Table Expression) 改善效能
+  * 避免執行不必要的查詢
+  * 針對查詢條件欄位建立 Index
+  * 「小表串大表」 優於 「大表串小表」
+### 效能調校
+* 資料庫設計與規劃
+  * Primary Key 欄位的「長度儘量小」
+    * 能用 small integer 就不要用 integer
+    * 不要用 varchar 或 nvarchar，應該用 char 或 nchar
+  * 文字資料欄位若長度固定，如：身分證字號，就不要用 varchar 或 nvarchar，應該用 char 或 nchar
+  * 文字資料欄位若長度不固定，如：地址，則應該用 varchar 或 nvarchar
+  * 設計欄位時，若其值可有可無，最好也給一個預設值，並設成「不允許 NULL」。因為 SQL Server 在存放和查詢有 NULL 的資料表時，會花費額外的運算動作
+  * 若一個資料表的欄位過多，應「垂直切割」成兩個以上的資料表，並用同名的 Primary Key 一對多連結起來
+* 適當地建立索引
+  * 記得幫「Foreign Key」欄位建立索引，即使是很少被 JOIN 的資料表亦然
+  * 替「常被查詢」或「排序」的欄位建立索引，如：常被當作 WHERE 子句條件的欄位
+  * 用來建立索引的欄位，「長度不應過長」、「重複性應較低」，前者不要用超過 20 個位元組的欄位(如地址)，後者如姓名
+  * 不宜替過多欄位建立索引，否則反而會影響到新增、修改、刪除的效能，尤其是以線上交易 (OLTP) 為主的網站資料庫
+  * 若資料表存放的資料很「少」，就「不必刻意建立索引」，否則可能資料庫沿著索引樹狀結構去搜尋索引中的資料，反而比掃描整個資料表還慢
+  * 若查詢時符合條件的資料很多，則透過「非叢集索引」搜尋的效能，可能反而不如整個資料表逐筆掃描
+  * 建立「叢集索引」的欄位選擇至為重要，會影響到整個索引結構的效能。要用來建立「叢集索引」的欄位，務必選擇「整數」型別(鍵值會較小)、唯一、不可為 NULL
+* 適當地使用索引
+  * 以常數字元開頭才會使用到索引，若以萬用字元(%)開頭則不會使用索引
+  * 執行完成後按 Ctrl+L，可檢視「執行計畫」，關注成本(CBO)高、statistics io 頻率高、statistics time 較長的高成本作業
+  * 「負向查詢」(如NOT、!=、<>、!>、!<、NOT EXISTAS、NOT IN、NOT LIKE)常會讓「查詢最佳化程式」無法有效地使用索引，最好能用其他運算和語法改寫(非絕對)
+  * 避免讓 WHERE 子句中的欄位，進行字串串接或數字運算(使用 function)，否則可能導致「查詢最佳化程式」無法直接使用索引，而改採叢集索引掃描(非絕對)
+  * 資料表中的資料，會依照「叢集索引」欄位的順序存放，因此當您下 BETWEEN、GROUP BY、ORDER BY 時若有包含「叢集索引」欄位，由於資料已在資料表中排序好，因此可提升查詢速度
+  * 若使用「複合索引」，要注意索引順序上的第一個欄位，才適合當作過濾條件
+* 避免在 WHERE 子句中對欄位使用函數
+  * 範例說明
+    ```
+    SELECT * FROM Orders WHERE DATEPART(yyyy, OrderDate) = 1996 AND DATEPART(mm, OrderDate)=7
+    --可改成
+    SELECT * FROM Orders WHERE OrderDate BETWEEN '19960701' AND '19960731'
+    ```
+    
+    ```
+    SELECT * FROM Orders WHERE SUBSTRING(CustomerID, 1, 1) = 'D'
+    --可改成
+    SELECT * FROM Orders WHERE CustomerID LIKE 'D%' 
+    ```
+* AND 與 OR 的使用
+  * 在 AND 運算中，「只要有一個」條件有用到索引，即可大幅提升查詢速度
+  * 在 OR 運算中，要「所有的」條件都有可用的索引，才能使用索引來提升查詢速度，可用 UNION 聯集適當地改善
+* 適當地使用子查詢
+  * 相較於「子查詢 (Subquery)」，較建議用 JOIN 完成的查詢，多數情況下，JOIN 的效能會比子查詢較佳
+  * 子查詢類型
+    * 獨立子查詢：查詢的內容可單獨執行
+    * 關聯子查詢：無法單獨執行，即外層每一次查詢的動作都需要引用內層查詢的資料，或內層每一次查詢的動作都需要參考外層查詢的資料
+  * ROW_NUMBER 函數加上「分群 (PARTITION BY)」等功能，執行效能極佳 
+* 其他查詢技巧
+  * DISTINCT、ORDER BY 語法，會讓資料庫做額外的計算
+  * 聯集若沒有要剔除重複資料的需求，使用 UNION ALL 會比 UNION 更佳，因為後者會加入類似 DISTINCT 的演算法
+  * SELECT 最小需求的資料列與欄位，不要 SELECT *
+  * 在 SQL Server 2005 版本中，存取資料庫物件時，最好明確指定該物件的「結構描述 (Schema)」，也就是使用兩節式名稱
+  * 使用 CTE 或者 EXISTS 的方式，先縮小資料的範圍，避免大資料 JOIN 行為
+* 儘可能用 Stored Procedure 取代前端應用程式直接存取資料表
+  * Stored Procedure 除了經過事先編譯、效能較好以外，亦可節省 SQL 陳述式傳遞的頻寬，也方便商業邏輯的重複使用。再搭配自訂函數和 View 的使用，將來若要修改資料表結構、重新切割或反正規化時亦較方便
+* 儘可能在資料來源層，就先過濾資料
+<br>
+
+
 ## Generate
 * 範例：generate_series
 ```
@@ -41,7 +207,7 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
 
 ## Array 
 * Operators
-<table border="1" width="20%">
+  <table border="1" width="20%">
     <tr>
         <th width="2%">Operator</a>
         <th width="8%">Description</a>
@@ -110,93 +276,13 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
         <td> <code> ARRAY[4,5,6] || 7 </code> </td>
         <td> {4,5,6,7} </td>
     </tr>
-</table>
-
-<br>
-
-
-## SQL 效能調校
-### Search Argument (SARG)
-* 有效的查詢參數：`=`、`>`、`<`、`>=`、`<=`、`Between`、`Like`，如`like 'T%'`符合有效SARG，但`like '%T'`就不符合
-* 非有效的查詢參數：`NOT`、`!=`、`<>`、`!<`、`!>`、`NOT EXISTS`、`NOT IN`、`NOT LIKE`
-* 影響效能的寫法：
-  * 條件式中轉換欄位類型
-  * 條件式中對欄位做「運算」或「使用函數」 
-  * select 撈取不必要的欄位
-  * 負向查詢
-  * 少用 union(去重複)，可使用 union all 替代
-  * 少用子查詢
-  * 用「exists/not exists」取代「in/not in」
-  * 用「union/union all」取代「or」
-  * 用「between」取代「in」連續數字
-  * 需要查詢其他資料表資料時，使用「inner join」；不需要查詢其他資料表資料時，使用「exists/in」
-  * 不須排序的資料就別用 order by
-  * 善用 CTE(Common Table Expression) 改善效能
-  * 避免執行不必要的查詢
-  * 針對查詢條件欄位建立 Index
-  * 「小表串大表」 優於 「大表串小表」
-
-### 效能調校
-* 資料庫設計與規劃
-  * Primary Key 欄位的「長度儘量小」
-    * 能用 small integer 就不要用 integer
-    * 不要用 varchar 或 nvarchar，應該用 char 或 nchar
-  * 文字資料欄位若長度固定，如：身分證字號，就不要用 varchar 或 nvarchar，應該用 char 或 nchar
-  * 文字資料欄位若長度不固定，如：地址，則應該用 varchar 或 nvarchar
-  * 設計欄位時，若其值可有可無，最好也給一個預設值，並設成「不允許 NULL」。因為 SQL Server 在存放和查詢有 NULL 的資料表時，會花費額外的運算動作
-  * 若一個資料表的欄位過多，應「垂直切割」成兩個以上的資料表，並用同名的 Primary Key 一對多連結起來
-* 適當地建立索引
-  * 記得幫「Foreign Key」欄位建立索引，即使是很少被 JOIN 的資料表亦然
-  * 替「常被查詢」或「排序」的欄位建立索引，如：常被當作 WHERE 子句條件的欄位
-  * 用來建立索引的欄位，「長度不應過長」、「重複性應較低」，前者不要用超過 20 個位元組的欄位(如地址)，後者如姓名
-  * 不宜替過多欄位建立索引，否則反而會影響到新增、修改、刪除的效能，尤其是以線上交易 (OLTP) 為主的網站資料庫
-  * 若資料表存放的資料很「少」，就「不必刻意建立索引」，否則可能資料庫沿著索引樹狀結構去搜尋索引中的資料，反而比掃描整個資料表還慢
-  * 若查詢時符合條件的資料很多，則透過「非叢集索引」搜尋的效能，可能反而不如整個資料表逐筆掃描
-  * 建立「叢集索引」的欄位選擇至為重要，會影響到整個索引結構的效能。要用來建立「叢集索引」的欄位，務必選擇「整數」型別(鍵值會較小)、唯一、不可為 NULL
-* 適當地使用索引
-  * 以常數字元開頭才會使用到索引，若以萬用字元(%)開頭則不會使用索引
-  * 執行完成後按 Ctrl+L，可檢視「執行計畫」，關注成本(CBO)高、statistics io 頻率高、statistics time 較長的高成本作業
-  * 「負向查詢」(如NOT、!=、<>、!>、!<、NOT EXISTAS、NOT IN、NOT LIKE)常會讓「查詢最佳化程式」無法有效地使用索引，最好能用其他運算和語法改寫(非絕對)
-  * 避免讓 WHERE 子句中的欄位，進行字串串接或數字運算(使用 function)，否則可能導致「查詢最佳化程式」無法直接使用索引，而改採叢集索引掃描(非絕對)
-  * 資料表中的資料，會依照「叢集索引」欄位的順序存放，因此當您下 BETWEEN、GROUP BY、ORDER BY 時若有包含「叢集索引」欄位，由於資料已在資料表中排序好，因此可提升查詢速度
-  * 若使用「複合索引」，要注意索引順序上的第一個欄位，才適合當作過濾條件
-* 避免在 WHERE 子句中對欄位使用函數
-  * 範例說明
-    ```
-    SELECT * FROM Orders WHERE DATEPART(yyyy, OrderDate) = 1996 AND DATEPART(mm, OrderDate)=7
-    --可改成
-    SELECT * FROM Orders WHERE OrderDate BETWEEN '19960701' AND '19960731'
-    ```
-    
-    ```
-    SELECT * FROM Orders WHERE SUBSTRING(CustomerID, 1, 1) = 'D'
-    --可改成
-    SELECT * FROM Orders WHERE CustomerID LIKE 'D%' 
-    ```
-* AND 與 OR 的使用
-  * 在 AND 運算中，「只要有一個」條件有用到索引，即可大幅提升查詢速度
-  * 在 OR 運算中，要「所有的」條件都有可用的索引，才能使用索引來提升查詢速度，可用 UNION 聯集適當地改善
-* 適當地使用子查詢
-  * 相較於「子查詢 (Subquery)」，較建議用 JOIN 完成的查詢，多數情況下，JOIN 的效能會比子查詢較佳
-  * 子查詢類型
-    * 獨立子查詢：查詢的內容可單獨執行
-    * 關聯子查詢：無法單獨執行，即外層每一次查詢的動作都需要引用內層查詢的資料，或內層每一次查詢的動作都需要參考外層查詢的資料
-  * ROW_NUMBER 函數加上「分群 (PARTITION BY)」等功能，執行效能極佳 
-* 其他查詢技巧
-  * DISTINCT、ORDER BY 語法，會讓資料庫做額外的計算
-  * 聯集若沒有要剔除重複資料的需求，使用 UNION ALL 會比 UNION 更佳，因為後者會加入類似 DISTINCT 的演算法
-  * SELECT 最小需求的資料列與欄位，不要 SELECT *
-  * 在 SQL Server 2005 版本中，存取資料庫物件時，最好明確指定該物件的「結構描述 (Schema)」，也就是使用兩節式名稱
-  * 使用 CTE 或者 EXISTS 的方式，先縮小資料的範圍，避免大資料 JOIN 行為
-* 儘可能用 Stored Procedure 取代前端應用程式直接存取資料表
-  * Stored Procedure 除了經過事先編譯、效能較好以外，亦可節省 SQL 陳述式傳遞的頻寬，也方便商業邏輯的重複使用。再搭配自訂函數和 View 的使用，將來若要修改資料表結構、重新切割或反正規化時亦較方便
-* 儘可能在資料來源層，就先過濾資料
+  </table>
 <br>
 
 
 ## Regex in My SQL
 * Regular Expressions
-<table border="1" width="20%">
+  <table border="1" width="20%">
     <tr>
         <th width="2%">Name</a>
         <th width="8%">Description</a>
@@ -257,11 +343,11 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
         <td> Whether string matches regular expression </td>
         <td>  </td>
     </tr>
-</table>
+  </table>
 <br>
 
 * Metacharacters
-<table border="1" width="35%">
+  <table border="1" width="35%">
     <tr>
         <th width="2%">Metacharacter</a>
         <th width="15%">Description</a>
@@ -316,11 +402,11 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
         <td> <code> co+ </code> </td>
         <td> coo, cool </td>
     </tr>
-</table>
+  </table>
 <br>
 
 * POSIX comparators
-<table border="1" width="30%">
+  <table border="1" width="30%">
     <tr>
         <th width="5%">Operator</a>
         <th width="10%">Description</a>
@@ -367,7 +453,7 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
         <td> <code> 'Timmy' !~* 't%' </code> </td>
         <td> False </td>
     </tr>
-</table>
+  </table>
 <br>
 
 * SQL範例
@@ -463,93 +549,93 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
   * Postgresql
     * string_agg(expression, delimiter)：直接把一個表達式變成字符串
     * array_agg(expression)：把表達式變成一個數組，一般配合 array_to_string() 使用
-    ```
-    select * from test ;
-     name
-    ------
-     AA
-     BB
-     CC
+      ```
+      select * from test ;
+       name
+      ------
+       AA
+       BB
+       CC
  
-    select string_agg(name,',') from test;
-     string_agg
-    ------------
-     AA,BB,CC
-    ```
+      select string_agg(name,',') from test;
+       string_agg
+      ------------
+       AA,BB,CC
+      ```
  
-    ```
-    create table jinbo.employee (empno smallint, ename varchar(20), job varchar(20), mgr smallint, hiredate date, sal bigint, comm bigint, deptno smallint);
+      ```
+      create table jinbo.employee (empno smallint, ename varchar(20), job varchar(20), mgr smallint, hiredate date, sal bigint, comm bigint, deptno smallint);
 
-    insert into jinbo.employee(empno,ename,job, mgr, hiredate, sal, comm, deptno) values (7499, 'ALLEN', 'SALEMAN', 7698, '2014-11-12', 16000, 300, 30);
+      insert into jinbo.employee(empno,ename,job, mgr, hiredate, sal, comm, deptno) values (7499, 'ALLEN', 'SALEMAN', 7698, '2014-11-12', 16000, 300, 30);
 
-    insert into jinbo.employee(empno,ename,job, mgr, hiredate, sal, comm, deptno) values (7499, 'ALLEN', 'SALEMAN', 7698, '2014-11-12', 16000, 300, 30);
+      insert into jinbo.employee(empno,ename,job, mgr, hiredate, sal, comm, deptno) values (7499, 'ALLEN', 'SALEMAN', 7698, '2014-11-12', 16000, 300, 30);
 
-    insert into jinbo.employee(empno,ename,job, mgr, hiredate, sal, comm, deptno) values (7654, 'MARTIN', 'SALEMAN', 7698, '2016-09-12', 12000, 1400, 30);
+      insert into jinbo.employee(empno,ename,job, mgr, hiredate, sal, comm, deptno) values (7654, 'MARTIN', 'SALEMAN', 7698, '2016-09-12', 12000, 1400, 30);
 
-    select * from jinbo.employee;
-     empno | ename  |   job   | mgr  |  hiredate  |  sal  | comm | deptno 
-    -------+--------+---------+------+------------+-------+------+--------
-      7499 | ALLEN  | SALEMAN | 7698 | 2014-11-12 | 16000 |  300 |     30
-      7566 | JONES  | MANAGER | 7839 | 2015-12-12 | 32000 |    0 |     20
-      7654 | MARTIN | SALEMAN | 7698 | 2016-09-12 | 12000 | 1400 |     30
-    -----------------------------------
+      select * from jinbo.employee;
+       empno | ename  |   job   | mgr  |  hiredate  |  sal  | comm | deptno 
+      -------+--------+---------+------+------------+-------+------+--------
+        7499 | ALLEN  | SALEMAN | 7698 | 2014-11-12 | 16000 |  300 |     30
+        7566 | JONES  | MANAGER | 7839 | 2015-12-12 | 32000 |    0 |     20
+        7654 | MARTIN | SALEMAN | 7698 | 2016-09-12 | 12000 | 1400 |     30
+      -----------------------------------
     
     
-    --方法1
-    select deptno, string_agg(ename, ',') 
-    from jinbo.employee group by deptno;
+      --方法1
+      select deptno, string_agg(ename, ',') 
+      from jinbo.employee group by deptno;
 
-    --方法2
-    select deptno, array_to_string(array_agg(ename),',')
-    from jinbo.employee group by deptno;
+      --方法2
+      select deptno, array_to_string(array_agg(ename),',')
+      from jinbo.employee group by deptno;
     
-    --方法1和2的結果
-     deptno |  string_agg  
-    --------+--------------
-         20 | JONES
-         30 | ALLEN,MARTIN
+      --方法1和2的結果
+       deptno |  string_agg  
+      --------+--------------
+           20 | JONES
+           30 | ALLEN,MARTIN
         
         
-    --方法3：按ename倒敘合併
-    select deptno, string_agg(ename, ',' order by ename desc) 
-    from jinbo.employee group by deptno;
+      --方法3：按ename倒敘合併
+      select deptno, string_agg(ename, ',' order by ename desc) 
+      from jinbo.employee group by deptno;
     
-    --方法3結果
-     deptno |  string_agg  
-    --------+--------------
-         20 | JONES
-         30 | MARTIN,ALLEN
+      --方法3結果
+       deptno |  string_agg  
+      --------+--------------
+           20 | JONES
+           30 | MARTIN,ALLEN
          
          
-    --方法4：按數組格式輸出       
-    select deptno, array_agg(ename) 
-    from jinbo.employee group by deptno;
+      --方法4：按數組格式輸出       
+      select deptno, array_agg(ename) 
+      from jinbo.employee group by deptno;
 
-    --方法4結果    
-     deptno |   array_agg    
-    --------+----------------
-         20 | {JONES}
-         30 | {ALLEN,MARTIN}
+      --方法4結果    
+       deptno |   array_agg    
+      --------+----------------
+           20 | {JONES}
+           30 | {ALLEN,MARTIN}
 
 
-    --方法5-1：去重複元素
-    select array_agg(distinct deptno) 
-    from jinbo.employee;
+      --方法5-1：去重複元素
+      select array_agg(distinct deptno) 
+      from jinbo.employee;
     
-    --方法5-1結果
-    array_agg 
-    -----------
-     {20,30}
+      --方法5-1結果
+      array_agg 
+      -----------
+       {20,30}
 
-    --方法5-2：去重複元素，且排序
-    select array_agg(distinct deptno order by deptno desc) 
-    from jinbo.employee;
+      --方法5-2：去重複元素，且排序
+      select array_agg(distinct deptno order by deptno desc) 
+      from jinbo.employee;
     
-    --方法5-2結果
-     array_agg 
-    -----------
-     {30,20}
-    ˋˋˋ
+      --方法5-2結果
+       array_agg 
+      -----------
+       {30,20}
+      ˋˋˋ
   * SQL SERVER 2000
     ```
     create table tb(姓名 varchar(10) , 課程 varchar(10) , 分數 int) 
@@ -622,30 +708,30 @@ SELECT current_date + s.a AS dates FROM generate_series(0,14,7) AS s(a);
   * Oracle：PIVOT(oracle11g)
     * PIVOT 內需有聚集函數
     * 將 course_type 列的欄位值轉換成列名
-    ```
-    SELECT class_name, student_name, chinese_result, math_result, created_date
-    FROM (SELECT class_name, student_name, course_type, result, created_date
-          FROM class_tmp_2) T
-    PIVOT(sum(result)
-      FOR course_type in ('語文' AS chinese_result, '數學' AS math_result)); 
-    ```
+      ```
+      SELECT class_name, student_name, chinese_result, math_result, created_date
+      FROM (SELECT class_name, student_name, course_type, result, created_date
+            FROM class_tmp_2) T
+      PIVOT(sum(result)
+        FOR course_type in ('語文' AS chinese_result, '數學' AS math_result)); 
+      ```
     
-    ```
-    with temp as(  
-      select '台灣' nation ,'台北'      city from dual union all  
-      select '台灣' nation ,'台中'      city from dual union all  
-      select '台灣' nation ,'高雄'      city from dual union all 
-      select '日本' nation ,'北海道' city from dual union all  
-      select '日本' nation ,'東京'   city from dual union all  
-      select '日本' nation ,'大阪'   city from dual union all    
-      select '美國' nation ,'華盛頓' city from dual union all  
-      select '美國' nation ,'波士頓' city from dual union all  
-      select '美國' nation ,'紐約'   city from dual   
-    )  
-    select nation,listagg(city,'+') within GROUP (order by city) as city
-    from temp  
-    group by nation
-    ```
+      ```
+      with temp as(  
+        select '台灣' nation ,'台北'      city from dual union all  
+        select '台灣' nation ,'台中'      city from dual union all  
+        select '台灣' nation ,'高雄'      city from dual union all 
+        select '日本' nation ,'北海道' city from dual union all  
+        select '日本' nation ,'東京'   city from dual union all  
+        select '日本' nation ,'大阪'   city from dual union all    
+        select '美國' nation ,'華盛頓' city from dual union all  
+        select '美國' nation ,'波士頓' city from dual union all  
+        select '美國' nation ,'紐約'   city from dual   
+      )  
+      select nation,listagg(city,'+') within GROUP (order by city) as city
+      from temp  
+      group by nation
+      ```
 * 行轉列 
   * Postgresql
     ```
