@@ -90,7 +90,7 @@
 
 ## SQL 效能調校
 ### 影響效能主要因素
-* 選擇「適當的索引」：索引是加速數據查詢的一種技術，適當地創建索引可以加速查詢。適當的索引通常包括主鍵、唯一索引以及常用查詢的列
+* 選擇「適當的索引」：索引是加速數據查詢的一種技術，適當地創建索引可以加速查詢。適當的索引通常包括主鍵、唯一索引以及常用查詢的列。通常建議在 WHERE 子句中的所有列都建立索引，但過多的索引也會影響寫入性能，所以需要權衡
 * 「避免」全表掃描：如果查詢中沒有使用索引，則數據庫將進行全表掃描，將大大減慢查詢速度。因此，盡量避免使用不必要的子查詢、聯接和過濾條件
 * 使用「限制」和分頁：如果結果集很大，則限制和分頁可以「減少返回的行數」，進而提高效能
 ### 效能調校
@@ -130,13 +130,15 @@
   * 有效的查詢參數：`=`、`>`、`<`、`>=`、`<=`、`Between`、`Like`，如`like 'T%'`符合有效SARG，但`like '%T'`就不符合
   * 非有效的查詢參數：`NOT`、`!=`、`<>`、`!<`、`!>`、`NOT EXISTS`、`NOT IN`、`NOT LIKE`
 * 影響效能的寫法：
-  * 在 WHERE 子句應避免的事
-    * 避免在 WHERE 子句中對欄位使用函數
+  * 在 WHERE 子句中應避免的事
+    * 避免對欄位使用函數：易導致引擎放棄使用索引而進行全表掃描
       * 範例
         ```
-        SELECT * FROM Orders WHERE DATEPART(yyyy, OrderDate) = 1996 AND DATEPART(mm, OrderDate)=7
+        SELECT * FROM Orders 
+        WHERE DATEPART(yyyy, OrderDate) = 1996 AND DATEPART(mm, OrderDate)=7
         --可改成
-        SELECT * FROM Orders WHERE OrderDate BETWEEN '19960701' AND '19960731'
+        SELECT * FROM Orders 
+        WHERE OrderDate BETWEEN '19960701' AND '19960731'
         ```
     
         ```
@@ -144,13 +146,37 @@
         --可改成
         SELECT * FROM Orders WHERE CustomerID LIKE 'D%' 
         ```
-    * 避免在 where 子句中使用 `!=` 或 `<>` 
-      * 優化器將無法通過索引來確定將要命中的行數，而放棄使用索引而進行全表掃描
-    * 避免在 where 子句中使用 `or` 
-  * 條件式中轉換欄位類型
-  * 條件式中對欄位做「運算」或「使用函數」 
+    * 避免使用 `!=` 或 `<>`：優化器將無法通過索引來確定將要命中的行數，而放棄使用索引而進行全表掃描
+    * 避免使用 `or`：易導致引擎放棄使用索引而進行全表掃描
+      ```
+      select id from t where num=10 or num=20
+      --可改成
+      select id from t where num=10 
+      union all 
+      select id from t where num=20
+      ```
+    * 避免進行表達式操作：
+      * 易導致引擎放棄使用索引而進行全表掃描，故任何對列的操作都將導致表掃描，它包括資料庫函數、計算表達式等等，查詢時要儘可能將操作移至等號右邊
+        ```
+        SELECT * FROM RECORD WHERE SUBSTRING(CARD_NO,1,4)=』5378』
+        --可改成
+        SELECT * FROM RECORD WHERE CARD_NO LIKE 『5378%』
+        ```
+        ```
+        SELECT member_number, first_name, last_name 
+        FROM members 
+        WHERE DATEDIFF(yy,datofbirth,GETDATE()) > 21
+        --可改成
+        SELECT member_number, first_name, last_name 
+        FROM members 
+        WHERE dateofbirth < DATEADD(yy,-21,GETDATE())
+        ```
+  * 避免使用不相容的資料類型
+    * 如 float 和 int、char 和 varchar、binary 和 varbinary 是不兼容的
+    * 應當在編程時不相容型態轉化相容型態，不要等到運行時自動轉化
+  * 充分利用連接條件：完整列出兩個表之間的連結條件
+  * 盡量不要用 SELECT INTO 語句
   * 負向查詢
-  * 用「between」取代「in」連續數字
   * 需要查詢其他資料表資料時，使用「inner join」；不需要查詢其他資料表資料時，使用「exists/in」
   * 不須排序的資料就別用 order by
   * 避免執行不必要的查詢
@@ -173,6 +199,18 @@
         <td> SELECT 最小需求的資料列與欄位 </td>
         <td> ORACLE 在解析的過程中，會將「*」 依次轉換成所有的列名，這個工作是通過查詢資料字典完成的，這意味著將耗費更多的時間</td>
       </tr>
+      <tr>
+        <td> GROUP BY </td>
+        <td> DISTINCT </td>
+        <td> 範例 <br>
+             -低效 <br>
+              select OrderID from Details <br>
+              where UnitPrice > 10 <br>
+              group by OrderID <br>
+             -高效 <br>
+              select DISTINCT OrderID from Details <br>
+              where UnitPrice > 10
+        </td>
       <tr>
         <td> DISTINCT、ORDER BY </td>
         <td> 最高效的刪除重複記錄方法 <br>
@@ -202,7 +240,13 @@
       <tr>
         <td> OR </td>
         <td> UNION ALL/UNION </td>
-        <td>  </td>
+        <td> 範例 <br>
+             -低效 <br>
+              select id from t where num=10 or num=20 <br>
+             -高效 <br>
+              select id from t <br>
+              where num=10 union all select id from t where num=20
+        </td>
       </tr>
       <tr>
         <td> UNION </td>
@@ -221,6 +265,16 @@
               SELECT * FROM EMP <br>
               WHERE EMPNO > 0 <br>
               AND EXISTS (SELECT 『X』 FROM DEPT WHERE DEPT.DEPTNO = EMP.DEPTNO AND LOC = 『MELB』)
+        </td>
+      </tr>
+      <tr>
+        <td> IN </td>
+        <td> BETWEEN </td>
+        <td> 範例：連續的數值 <br>
+             -低效 <br>
+              select id from t where num in (1,2,3) <br>
+             -高效 <br>
+              select id from t where num between 1 and 3
         </td>
       </tr>
       <tr>
@@ -1002,3 +1056,4 @@
 * [RegEx101](https://regex101.com/)
 * [ASCII 控制字符](http://www.eion.com.tw/Blogger/?Pid=1128)
 * [SQL 效能調校](https://sweeteason.pixnet.net/blog/post/36954495-sql-%E6%95%88%E8%83%BD%E8%AA%BF%E6%A0%A1)
+* [20條Tips：高性能SQL查詢，最佳化取數速度方案](https://www.finereport.com/tw/data-analysis/sqlquery.html)
