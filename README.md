@@ -146,7 +146,7 @@
         --可改成
         SELECT * FROM Orders WHERE CustomerID LIKE 'D%' 
         ```
-    * 避免使用 `!=` 或 `<>`：優化器將無法通過索引來確定將要命中的行數，而放棄使用索引而進行全表掃描
+    * 避免使用 `!=` 或 `<>` 或 `NOT`：優化器將無法通過索引來確定將要命中的行數，而放棄使用索引而進行全表掃描
     * 避免使用 `or`：易導致引擎放棄使用索引而進行全表掃描
       ```
       select id from t where num=10 or num=20
@@ -171,6 +171,7 @@
         FROM members 
         WHERE dateofbirth < DATEADD(yy,-21,GETDATE())
         ```
+    * 善用子查詢功能，減少引擎進行全表掃描
   * 避免使用不相容的資料類型
     * 如 float 和 int、char 和 varchar、binary 和 varbinary 是不兼容的
     * 應當在編程時不相容型態轉化相容型態，不要等到運行時自動轉化
