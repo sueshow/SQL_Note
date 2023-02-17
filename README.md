@@ -131,19 +131,20 @@
   * 有效的查詢參數：`=`、`>`、`<`、`>=`、`<=`、`Between`、`Like`，如`like 'T%'`符合有效SARG，但`like '%T'`就不符合
   * 非有效的查詢參數：`NOT`、`!=`、`<>`、`!<`、`!>`、`NOT EXISTS`、`NOT IN`、`NOT LIKE`
 * 影響效能的寫法：
-  * 避免在 WHERE 子句中對欄位使用函數
-    * 範例說明
-      ```
-      SELECT * FROM Orders WHERE DATEPART(yyyy, OrderDate) = 1996 AND DATEPART(mm, OrderDate)=7
-      --可改成
-      SELECT * FROM Orders WHERE OrderDate BETWEEN '19960701' AND '19960731'
-      ```
+  * 應在 WHERE 避免的事
+    * 避免在 WHERE 子句中對欄位使用函數
+      * 範例
+        ```
+        SELECT * FROM Orders WHERE DATEPART(yyyy, OrderDate) = 1996 AND DATEPART(mm, OrderDate)=7
+        --可改成
+        SELECT * FROM Orders WHERE OrderDate BETWEEN '19960701' AND '19960731'
+        ```
     
-      ```
-      SELECT * FROM Orders WHERE SUBSTRING(CustomerID, 1, 1) = 'D'
-      --可改成
-      SELECT * FROM Orders WHERE CustomerID LIKE 'D%' 
-      ```
+        ```
+        SELECT * FROM Orders WHERE SUBSTRING(CustomerID, 1, 1) = 'D'
+        --可改成
+        SELECT * FROM Orders WHERE CustomerID LIKE 'D%' 
+        ```
   * 條件式中轉換欄位類型
   * 條件式中對欄位做「運算」或「使用函數」 
   * 負向查詢
