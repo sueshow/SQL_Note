@@ -92,22 +92,7 @@
 ### Search Argument (SARG)
 * 有效的查詢參數：`=`、`>`、`<`、`>=`、`<=`、`Between`、`Like`，如`like 'T%'`符合有效SARG，但`like '%T'`就不符合
 * 非有效的查詢參數：`NOT`、`!=`、`<>`、`!<`、`!>`、`NOT EXISTS`、`NOT IN`、`NOT LIKE`
-* 影響效能的寫法：
-  * 條件式中轉換欄位類型
-  * 條件式中對欄位做「運算」或「使用函數」 
-  * select 撈取不必要的欄位
-  * 負向查詢
-  * 少用 union(去重複)，可使用 union all 替代
-  * 少用子查詢
-  * 用「exists/not exists」取代「in/not in」
-  * 用「union/union all」取代「or」
-  * 用「between」取代「in」連續數字
-  * 需要查詢其他資料表資料時，使用「inner join」；不需要查詢其他資料表資料時，使用「exists/in」
-  * 不須排序的資料就別用 order by
-  * 善用 CTE(Common Table Expression) 改善效能
-  * 避免執行不必要的查詢
-  * 針對查詢條件欄位建立 Index
-  * 「小表串大表」 優於 「大表串小表」
+
 
 ### 效能調校
 * 資料庫設計與規劃
@@ -156,6 +141,20 @@
     * 關聯子查詢：無法單獨執行，即外層每一次查詢的動作都需要引用內層查詢的資料，或內層每一次查詢的動作都需要參考外層查詢的資料
   * ROW_NUMBER 函數加上「分群 (PARTITION BY)」等功能，執行效能極佳 
 * 其他查詢技巧
+  * 影響效能的寫法：
+    * 條件式中轉換欄位類型
+    * 條件式中對欄位做「運算」或「使用函數」 
+    * 負向查詢
+    * 少用子查詢
+    * 用「exists/not exists」取代「in/not in」
+    * 用「union/union all」取代「or」
+    * 用「between」取代「in」連續數字
+    * 需要查詢其他資料表資料時，使用「inner join」；不需要查詢其他資料表資料時，使用「exists/in」
+    * 不須排序的資料就別用 order by
+    * 善用 CTE(Common Table Expression) 改善效能
+    * 避免執行不必要的查詢
+    * 針對查詢條件欄位建立 Index
+    * 「小表串大表」 優於 「大表串小表」
   <table border="1" width="40%">
     <tr>
         <th width="5%">用途、技巧</a>
@@ -174,12 +173,12 @@
     </tr>
     <tr>
         <td> DISTINCT </td>
-        <td> 最高效的刪除重複記錄方法 
-             ```
-             DELETE FROM EMP E 
-             WHERE E.ROWID > ( SELECT MIN(X.ROWID) 
-                               FROM EMP X WHERE X.EMP_NO = E.EMP_NO) 
-             ```
+        <td> 最高效的刪除重複記錄方法 <br>
+             ``` <br>
+             DELETE FROM EMP E <br>
+             WHERE E.ROWID > ( SELECT MIN(X.ROWID) <br>
+                               FROM EMP X WHERE X.EMP_NO = E.EMP_NO) <br>
+             ``` 
         </td>
         <td> DISTINCT、ORDER BY 語法，會讓資料庫做額外的計算 </td>
     </tr>
