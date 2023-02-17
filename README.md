@@ -117,19 +117,7 @@
   * 避免讓 WHERE 子句中的欄位，進行字串串接或數字運算(使用 function)，否則可能導致「查詢最佳化程式」無法直接使用索引，而改採叢集索引掃描(非絕對)
   * 資料表中的資料，會依照「叢集索引」欄位的順序存放，因此當您下 BETWEEN、GROUP BY、ORDER BY 時若有包含「叢集索引」欄位，由於資料已在資料表中排序好，因此可提升查詢速度
   * 若使用「複合索引」，要注意索引順序上的第一個欄位，才適合當作過濾條件
-* 避免在 WHERE 子句中對欄位使用函數
-  * 範例說明
-    ```
-    SELECT * FROM Orders WHERE DATEPART(yyyy, OrderDate) = 1996 AND DATEPART(mm, OrderDate)=7
-    --可改成
-    SELECT * FROM Orders WHERE OrderDate BETWEEN '19960701' AND '19960731'
-    ```
-    
-    ```
-    SELECT * FROM Orders WHERE SUBSTRING(CustomerID, 1, 1) = 'D'
-    --可改成
-    SELECT * FROM Orders WHERE CustomerID LIKE 'D%' 
-    ```
+
 * AND 與 OR 的使用
   * 在 AND 運算中，「只要有一個」條件有用到索引，即可大幅提升查詢速度
   * 在 OR 運算中，要「所有的」條件都有可用的索引，才能使用索引來提升查詢速度，可用 UNION 聯集適當地改善
@@ -143,32 +131,46 @@
   * 有效的查詢參數：`=`、`>`、`<`、`>=`、`<=`、`Between`、`Like`，如`like 'T%'`符合有效SARG，但`like '%T'`就不符合
   * 非有效的查詢參數：`NOT`、`!=`、`<>`、`!<`、`!>`、`NOT EXISTS`、`NOT IN`、`NOT LIKE`
 * 影響效能的寫法：
-    * 條件式中轉換欄位類型
-    * 條件式中對欄位做「運算」或「使用函數」 
-    * 負向查詢
-    * 用「between」取代「in」連續數字
-    * 需要查詢其他資料表資料時，使用「inner join」；不需要查詢其他資料表資料時，使用「exists/in」
-    * 不須排序的資料就別用 order by
-    * 避免執行不必要的查詢
-    * 針對查詢條件欄位建立 Index
-    * 「小表串大表」 優於 「大表串小表」
-  <table border="1" width="40%">
-    <tr>
+  * 避免在 WHERE 子句中對欄位使用函數
+    * 範例說明
+      ```
+      SELECT * FROM Orders WHERE DATEPART(yyyy, OrderDate) = 1996 AND DATEPART(mm, OrderDate)=7
+      --可改成
+      SELECT * FROM Orders WHERE OrderDate BETWEEN '19960701' AND '19960731'
+      ```
+    
+      ```
+      SELECT * FROM Orders WHERE SUBSTRING(CustomerID, 1, 1) = 'D'
+      --可改成
+      SELECT * FROM Orders WHERE CustomerID LIKE 'D%' 
+      ```
+  * 條件式中轉換欄位類型
+  * 條件式中對欄位做「運算」或「使用函數」 
+  * 負向查詢
+  * 用「between」取代「in」連續數字
+  * 需要查詢其他資料表資料時，使用「inner join」；不需要查詢其他資料表資料時，使用「exists/in」
+  * 不須排序的資料就別用 order by
+  * 避免執行不必要的查詢
+  * 針對查詢條件欄位建立 Index
+  * 「小表串大表」 優於 「大表串小表」
+  * 其他用法彙整
+    <table border="1" width="40%">
+      <tr>
         <th width="5%">語法</a>
         <th width="5%">效能好的語法</a>
         <th width="10%">說明</a>
-    </tr>
-    <tr>
+      </tr>
+      <tr>
         <td> DELETE </td>
         <td> TRUNCATE </td>
         <td> 減少 rollback segments 產生可被恢復的信息 </td>
-    </tr>
-    <tr>
+      </tr>
+      <tr>
         <td> SELECT * </td>
         <td> SELECT 最小需求的資料列與欄位 </td>
-        <td> ORACLE 在解析的過程中，會將「*」 依次轉換成所有的列名，這個工作是通過查詢資料字典完成的，這意味著將耗費更多的時間 </td>
-    </tr>
-    <tr>
+        <td> ORACLE 在解析的過程中，會將「*」 依次轉換成所有的列名，這個工作是通過查詢資料字典完成的，這意味著將耗費更多的時間</td>
+      </tr>
+      <tr>
         <td> DISTINCT、ORDER BY </td>
         <td> 最高效的刪除重複記錄方法 <br>
              ``` <br>
@@ -178,8 +180,8 @@
              ``` 
         </td>
         <td> DISTINCT、ORDER BY 語法，會讓資料庫做額外的計算 </td>
-    </tr>
-    <tr>
+      </tr>
+      <tr>
         <td> DISTINCT </td>
         <td> EXISTS </td>
         <td> 範例 <br> 
@@ -188,23 +190,23 @@
              -高效 <br>
               SELECT DEPT_NO,DEPT_NAME FROM DEPT D WHERE EXISTS ( SELECT 『X』 FROM EMP E WHERE E.DEPT_NO = D.DEPT_NO)
         </td>
-    </tr>
-    <tr>
+      </tr>
+      <tr>
         <td> COUNT(1) </td>
         <td> COUNT(*) </td>
         <td> 可通過索引檢索，對索引列的計數仍舊是最快的，如 COUNT(EMPNO) </td>
-    </tr>
-    <tr>
+      </tr>
+      <tr>
         <td> OR </td>
         <td> UNION ALL/UNION </td>
         <td>  </td>
-    </tr>
-    <tr>
+      </tr>
+      <tr>
         <td> UNION </td>
         <td> UNION ALL </td>
         <td> 聯集若沒有要剔除重複資料的需求，使用 UNION ALL 會比 UNION 更佳，因為後者會加入類似 DISTINCT 的演算法 </td>
-    </tr>
-    <tr>
+      </tr>
+      <tr>
         <td> IN/NOT IN </td>
         <td> EXISTS/NOT EXISTS </td>
         <td> 範例 <br>
@@ -217,28 +219,28 @@
               WHERE EMPNO > 0 <br>
               AND EXISTS (SELECT 『X』 FROM DEPT WHERE DEPT.DEPTNO = EMP.DEPTNO AND LOC = 『MELB』)
         </td>
-    </tr>
-    <tr>
+      </tr>
+      <tr>
         <td> > </td>
         <td> >= </td>
         <td> 後者(>=4) DBMS 將直接跳到第一個 DEPT 等於 4 的記錄，而前者(>3)將首先定位到 DEPTNO=3 的記錄並且向前掃描到第一個 DEPT 大於 3 的記錄 </td>
-    </tr>
-    <tr>
+      </tr>
+      <tr>
         <td> 少用子查詢 </td>
         <td> 善用 CTE(Common Table Expression) 改善效能 </td>
         <td> </td>
-    </tr>
-    <tr>
+      </tr>
+      <tr>
         <td>  </td>
         <td> 使用 CTE 或者 EXISTS 的方式 </td>
         <td> 先縮小資料的範圍，避免大資料 JOIN 行為 </td>
-    </tr>
-    <tr>
+      </tr>
+      <tr>
         <td>  </td>
         <td> 最好明確指定該物件的「結構描述 (Schema)」 </td>
         <td> 在 SQL Server 2005 版本中，存取資料庫物件時，最好明確指定該物件的「結構描述 (Schema)」，也就是使用兩節式名稱 </td>
-    </tr>
-  </table>
+      </tr>
+    </table>
  
 * 儘可能用 Stored Procedure 取代前端應用程式直接存取資料表
   * Stored Procedure 除了經過事先編譯、效能較好以外，亦可節省 SQL 陳述式傳遞的頻寬，也方便商業邏輯的重複使用。再搭配自訂函數和 View 的使用，將來若要修改資料表結構、重新切割或反正規化時亦較方便
