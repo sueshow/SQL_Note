@@ -89,11 +89,10 @@
 
 
 ## SQL 效能調校
-### Search Argument (SARG)
-* 有效的查詢參數：`=`、`>`、`<`、`>=`、`<=`、`Between`、`Like`，如`like 'T%'`符合有效SARG，但`like '%T'`就不符合
-* 非有效的查詢參數：`NOT`、`!=`、`<>`、`!<`、`!>`、`NOT EXISTS`、`NOT IN`、`NOT LIKE`
-
-
+### 影響效能主要因素
+* 選擇「適當的索引」：索引是加速數據查詢的一種技術，適當地創建索引可以加速查詢。適當的索引通常包括主鍵、唯一索引以及常用查詢的列
+* 「避免」全表掃描：如果查詢中沒有使用索引，則數據庫將進行全表掃描，將大大減慢查詢速度。因此，盡量避免使用不必要的子查詢、聯接和過濾條件
+* 使用「限制」和分頁：如果結果集很大，則限制和分頁可以「減少返回的行數」，進而提高效能
 ### 效能調校
 * 資料庫設計與規劃
   * Primary Key 欄位的「長度儘量小」
@@ -140,25 +139,23 @@
     * 獨立子查詢：查詢的內容可單獨執行
     * 關聯子查詢：無法單獨執行，即外層每一次查詢的動作都需要引用內層查詢的資料，或內層每一次查詢的動作都需要參考外層查詢的資料
   * ROW_NUMBER 函數加上「分群 (PARTITION BY)」等功能，執行效能極佳 
-* 其他查詢技巧
-  * 影響效能的寫法：
+* Search Argument (SARG)
+  * 有效的查詢參數：`=`、`>`、`<`、`>=`、`<=`、`Between`、`Like`，如`like 'T%'`符合有效SARG，但`like '%T'`就不符合
+  * 非有效的查詢參數：`NOT`、`!=`、`<>`、`!<`、`!>`、`NOT EXISTS`、`NOT IN`、`NOT LIKE`
+* 影響效能的寫法：
     * 條件式中轉換欄位類型
     * 條件式中對欄位做「運算」或「使用函數」 
     * 負向查詢
-    * 少用子查詢
-    * 用「exists/not exists」取代「in/not in」
-    * 用「union/union all」取代「or」
     * 用「between」取代「in」連續數字
     * 需要查詢其他資料表資料時，使用「inner join」；不需要查詢其他資料表資料時，使用「exists/in」
     * 不須排序的資料就別用 order by
-    * 善用 CTE(Common Table Expression) 改善效能
     * 避免執行不必要的查詢
     * 針對查詢條件欄位建立 Index
     * 「小表串大表」 優於 「大表串小表」
   <table border="1" width="40%">
     <tr>
-        <th width="5%">用途、技巧</a>
-        <th width="5%">效能好的方式</a>
+        <th width="5%">語法</a>
+        <th width="5%">效能好的語法</a>
         <th width="10%">說明</a>
     </tr>
     <tr>
@@ -172,7 +169,7 @@
         <td> ORACLE 在解析的過程中，會將「*」 依次轉換成所有的列名，這個工作是通過查詢資料字典完成的，這意味著將耗費更多的時間 </td>
     </tr>
     <tr>
-        <td> DISTINCT </td>
+        <td> DISTINCT、ORDER BY </td>
         <td> 最高效的刪除重複記錄方法 <br>
              ``` <br>
              DELETE FROM EMP E <br>
@@ -183,14 +180,53 @@
         <td> DISTINCT、ORDER BY 語法，會讓資料庫做額外的計算 </td>
     </tr>
     <tr>
-        <td> count(1) </td>
-        <td> count(*) </td>
+        <td> DISTINCT </td>
+        <td> EXISTS </td>
+        <td> 範例 <br> 
+             -低效 <br>
+              SELECT DISTINCT DEPT_NO,DEPT_NAME FROM DEPT D,EMP E WHERE D.DEPT_NO = E.DEPT_NO <br>
+             -高效 <br>
+              SELECT DEPT_NO,DEPT_NAME FROM DEPT D WHERE EXISTS ( SELECT 『X』 FROM EMP E WHERE E.DEPT_NO = D.DEPT_NO)
+        </td>
+    </tr>
+    <tr>
+        <td> COUNT(1) </td>
+        <td> COUNT(*) </td>
         <td> 可通過索引檢索，對索引列的計數仍舊是最快的，如 COUNT(EMPNO) </td>
+    </tr>
+    <tr>
+        <td> OR </td>
+        <td> UNION ALL/UNION </td>
+        <td>  </td>
     </tr>
     <tr>
         <td> UNION </td>
         <td> UNION ALL </td>
         <td> 聯集若沒有要剔除重複資料的需求，使用 UNION ALL 會比 UNION 更佳，因為後者會加入類似 DISTINCT 的演算法 </td>
+    </tr>
+    <tr>
+        <td> IN/NOT IN </td>
+        <td> EXISTS/NOT EXISTS </td>
+        <td> 範例 <br>
+             -低效 <br>
+              SELECT * FROM EMP <br>
+              WHERE EMPNO > 0 <br>
+              AND DEPTNO IN (SELECT DEPTNO FROM DEPT WHERE LOC =』MELB』) <br>
+             -高效 <br>
+              SELECT * FROM EMP <br>
+              WHERE EMPNO > 0 <br>
+              AND EXISTS (SELECT 『X』 FROM DEPT WHERE DEPT.DEPTNO = EMP.DEPTNO AND LOC = 『MELB』)
+        </td>
+    </tr>
+    <tr>
+        <td> > </td>
+        <td> >= </td>
+        <td> 後者(>=4) DBMS 將直接跳到第一個 DEPT 等於 4 的記錄，而前者(>3)將首先定位到 DEPTNO=3 的記錄並且向前掃描到第一個 DEPT 大於 3 的記錄 </td>
+    </tr>
+    <tr>
+        <td> 少用子查詢 </td>
+        <td> 善用 CTE(Common Table Expression) 改善效能 </td>
+        <td> </td>
     </tr>
     <tr>
         <td>  </td>
@@ -207,12 +243,6 @@
 * 儘可能用 Stored Procedure 取代前端應用程式直接存取資料表
   * Stored Procedure 除了經過事先編譯、效能較好以外，亦可節省 SQL 陳述式傳遞的頻寬，也方便商業邏輯的重複使用。再搭配自訂函數和 View 的使用，將來若要修改資料表結構、重新切割或反正規化時亦較方便
 * 儘可能在資料來源層，就先過濾資料
-
-### 影響效能主要因素
-* 選擇「適當的索引」：索引是加速數據查詢的一種技術，適當地創建索引可以加速查詢。適當的索引通常包括主鍵、唯一索引以及常用查詢的列
-* 「避免」全表掃描：如果查詢中沒有使用索引，則數據庫將進行全表掃描，將大大減慢查詢速度。因此，盡量避免使用不必要的子查詢、聯接和過濾條件
-* 使用「限制」和分頁：如果結果集很大，則限制和分頁可以「減少返回的行數」，進而提高效能
-
 <br>
 
 
